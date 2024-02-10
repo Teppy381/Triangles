@@ -1,6 +1,7 @@
 #include "float_cmp.hpp"
 #include "cassert"
 #include <iostream>
+#include <cmath>
 
 struct Point_t
 {
@@ -34,13 +35,22 @@ struct Vector_t : public Point_t
 {
     using Point_t::Point_t;
 
+    // vector from {0, 0, 0} to P
+    Vector_t(Point_t P) : Point_t(P.x, P.y, P.z)
+    {}
+
     // vector from P1 to P2
     Vector_t(Point_t P1, Point_t P2) : Point_t{P2.x - P1.x, P2.y - P1.y, P2.z - P1.z}
     {}
 
+    float length() const
+    {
+        return std::sqrt(x*x + y*y + z*z);
+    }
+
     Vector_t normalize() const
     {
-        float length = std::sqrt(x*x + y*y + z*z);
+        float length = (*this).length();
         return Vector_t{x/length, y/length, z/length};
     }
 
@@ -57,6 +67,11 @@ struct Vector_t : public Point_t
     Vector_t operator-(const Vector_t& rhs) const
     {
         return Vector_t{x - rhs.x, y - rhs.y, z - rhs.z};
+    }
+
+    Vector_t operator*(float rhs) const
+    {
+        return Vector_t{x * rhs, y * rhs, z * rhs};
     }
 
 };
@@ -152,7 +167,47 @@ bool boxes_intersect(const Boxed_triangle_t& tr1, const Boxed_triangle_t& tr2)
 
 bool triangle_point_coplanar_intersection(Triangle_t& tr, Point_t& A)
 {
-    return false; // TODO
+    Vector_t vec{tr.P, A};
+    // decomposition: vec == tr.e1 * t1 + tr.e2 * t2
+    float x1 = tr.e1.x,
+          y1 = tr.e1.y,
+          z1 = tr.e1.z,
+          x2 = tr.e2.x,
+          y2 = tr.e2.y,
+          z2 = tr.e2.z,
+          xA = vec.x,
+          yA = vec.y,
+          zA = vec.z;
+
+    float t2 = (x1*zA - xA*z1)/(x1*z2 - x2*z1);
+    if (!std::isfinite(t2))
+    {
+        t2 = (x1*yA - xA*y1)/(x1*y2 - x2*y1);
+        if (!std::isfinite(t2))
+        {
+            std::cout << "Math error!" << std::endl;
+            exit(1);
+        }
+    }
+    float t1 = (xA - x2*t2)/x1;
+    if (!std::isfinite(t1))
+    {
+        t1 = (yA - y2*t2)/y1;
+        if (!std::isfinite(t1))
+        {
+            t1 = (zA - z2*t2)/z1;
+            if (!std::isfinite(t1))
+            {
+                std::cout << "Math error!" << std::endl;
+                exit(1);
+            }
+        }
+    }
+    if (t1 < 0 || t1 > 1 || t2 < 0 || t2 > 1 || (t1 + t2) < 0 || (t1 + t2) > 1)
+    {
+        return false;
+    }
+    return true;
 }
 
 bool triangle_line_segment_coplanar_intersection(Triangle_t& tr, Point_t& P1, Point_t& P2)
@@ -165,9 +220,8 @@ bool lookup_coplanar_intersection(Triangle_t& tr1, Triangle_t& tr2)
     return false; // TODO
 }
 
-bool triangle_line_segment_intersection(Triangle_t& tr, Point_t& P1, Point_t& P2)
+bool triangle_line_segment_intersection(Triangle_t& tr, Point_t P1, Point_t P2)
 {
-    Vector_t seg{P1, P2};
     Vector_t L1{P1, tr.P};
     Vector_t L2{P2, tr.P};
     Vector_t normal = cross_product(tr.e1, tr.e2);
@@ -194,12 +248,34 @@ bool triangle_line_segment_intersection(Triangle_t& tr, Point_t& P1, Point_t& P2
         return false;
     }
     // else (P1 and P2 are in different half-spaces)
-    return false; // TODO
+
+    Vector_t U{P1, P2};
+
+    float dot = dot_product(normal, U);
+    if (is_zero(dot)) {return false;} // parallel to triangle
+
+    Vector_t W{tr.P, P1};
+
+    float fac = -dot_product(normal, W) / dot;
+    if (fac < 0 || fac > 1)
+    {
+        return false;
+    }
+    Point_t point = Vector_t{P1} + (U * fac);
+
+    return triangle_point_coplanar_intersection(tr, point);
 }
+
 
 bool lookup_non_coplanar_intersection(Triangle_t& tr1, Triangle_t& tr2)
 {
-    return false; // TODO
+    return
+    triangle_line_segment_intersection(tr1, tr2.P, (Vector_t) tr2.P + tr2.e1) ||
+    triangle_line_segment_intersection(tr1, tr2.P, (Vector_t) tr2.P + tr2.e2) ||
+    triangle_line_segment_intersection(tr1, (Vector_t) tr2.P + tr2.e1, (Vector_t) tr2.P + tr2.e2) ||
+    triangle_line_segment_intersection(tr2, tr1.P, (Vector_t) tr1.P + tr1.e1) ||
+    triangle_line_segment_intersection(tr2, tr1.P, (Vector_t) tr1.P + tr1.e2) ||
+    triangle_line_segment_intersection(tr2, (Vector_t) tr1.P + tr1.e1, (Vector_t) tr1.P + tr1.e2);
 }
 
 bool lookup_intersection(Boxed_triangle_t& tr1, Boxed_triangle_t& tr2)

@@ -6,9 +6,22 @@
 
 int point_and_vector();
 int products();
+int vectors();
 
 
 int main()
+{
+    Triangle_t my_triangle{{0, 0, 0}, {2, 0, 0}, {0, 2, 0}};
+    float x1, x2, x3;
+    std::cin >> x1 >> x2 >> x3;
+
+    Point_t my_point{x1, x2, x3};
+
+    SHOW(triangle_point_coplanar_intersection(my_triangle, my_point));
+}
+
+
+int vectors()
 {
     float x1, x2, x3;
     std::cin >> x1 >> x2 >> x3;
@@ -16,14 +29,12 @@ int main()
     std::cout << "min: " << min(x1, x2, x3) << std::endl;
 
     Vector_t vec{x1, x2, x3};
+    (vec * 100).dump();
     (-vec).dump();
     (vec + vec).dump();
     vec.dump();
     return 0;
 }
-
-
-
 
 int products()
 {
