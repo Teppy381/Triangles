@@ -76,6 +76,11 @@ struct Vector_t : public Point_t
 
 };
 
+bool is_zero(const Vector_t& vec)
+{
+    return is_zero(vec.x) && is_zero(vec.y) && is_zero(vec.z);
+}
+
 Vector_t cross_product(const Vector_t& vec1, const Vector_t& vec2)
 {
     assert(vec1.is_valid() && vec2.is_valid());
@@ -133,6 +138,15 @@ struct Triangle_t
     bool valid() const
     {
         return (P.is_valid() && e1.is_valid() && e2.is_valid());
+    }
+
+    void dump() const
+    {
+        std::cout << "Triangle:" << std::endl;
+
+        P.dump();
+        (e1 + P).dump();
+        (e2 + P).dump();
     }
 };
 
@@ -210,14 +224,79 @@ bool triangle_point_coplanar_intersection(Triangle_t& tr, Point_t& A)
     return true;
 }
 
+// assuming that all points are on the same line
+bool point_in_line_segment_intersection(Point_t& A1, Point_t& A2, Point_t& B)
+{
+    return (B.x <= A1.x && B.x >= A2.x) || (B.x >= A1.x && B.x <= A2.x);
+}
+
+bool line_segment_line_segment_coplanar_intersection(Point_t& A1, Point_t& A2, Point_t& B1, Point_t& B2)
+{
+    Vector_t normal = cross_product({A1, A2}, {B1, B2});
+    if (is_zero(normal.x) && is_zero(normal.y) && is_zero(normal.z)) // collinear lines
+    {
+        return is_zero(cross_product({A1, A2}, {A1, B2}));
+    }
+
+    float sig1 = triple_product({A1, A2}, normal, {A1, B2});
+    if (is_zero(sig1))
+    {
+        return point_in_line_segment_intersection(A1, A2, B2);
+    }
+    float sig2 = triple_product({A1, A2}, normal, {A1, B1});
+    if (is_zero(sig1))
+    {
+        return point_in_line_segment_intersection(A1, A2, B1);
+    }
+    if (sig1 * sig2 > 0)
+    {
+        return false;
+    }
+
+    float sig3 = triple_product({B1, B2}, normal, {B1, A2});
+    if (is_zero(sig1))
+    {
+        return point_in_line_segment_intersection(B1, B2, A2);
+    }
+    float sig4 = triple_product({B1, B2}, normal, {B1, A1});
+    if (is_zero(sig1))
+    {
+        return point_in_line_segment_intersection(B1, B2, A1);
+    }
+    if (sig3 * sig4 > 0)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+
 bool triangle_line_segment_coplanar_intersection(Triangle_t& tr, Point_t& P1, Point_t& P2)
 {
-    return false; // TODO
+    Point_t T1 = tr.e1;
+    Point_t T2 = tr.e1 + tr.P;
+    Point_t T3 = tr.e2 + tr.P;
+
+    return line_segment_line_segment_coplanar_intersection(P1, P2, T1, T2) ||
+           line_segment_line_segment_coplanar_intersection(P1, P2, T1, T3) ||
+           line_segment_line_segment_coplanar_intersection(P1, P2, T2, T3);
 }
 
 bool lookup_coplanar_intersection(Triangle_t& tr1, Triangle_t& tr2)
 {
-    return false; // TODO
+    Point_t T11 = tr1.e1;
+    Point_t T12 = tr1.e1 + tr1.P;
+    Point_t T13 = tr1.e2 + tr1.P;
+    Point_t T21 = tr2.e1;
+    Point_t T22 = tr2.e1 + tr2.P;
+    Point_t T23 = tr2.e2 + tr2.P;
+    return triangle_line_segment_coplanar_intersection(tr2, T11, T12) ||
+           triangle_line_segment_coplanar_intersection(tr2, T11, T13) ||
+           triangle_line_segment_coplanar_intersection(tr2, T12, T13) ||
+           triangle_line_segment_coplanar_intersection(tr1, T21, T22) ||
+           triangle_line_segment_coplanar_intersection(tr1, T21, T23) ||
+           triangle_line_segment_coplanar_intersection(tr1, T22, T23);
 }
 
 bool triangle_line_segment_intersection(Triangle_t& tr, Point_t P1, Point_t P2)
@@ -284,13 +363,26 @@ bool lookup_intersection(Boxed_triangle_t& tr1, Boxed_triangle_t& tr2)
 
     if (boxes_intersect(tr1, tr2) == false)
     {
+        std::cout << "Boxes do not intersect" << std::endl;
         return false;
     }
 
     Vector_t R = Vector_t{tr1.P, tr2.P}; // vector from tr1.P to tr2.P
 
     Vector_t n1 = tr1.get_normal();
+    if ((!n1.is_valid()) || is_zero(n1))
+    {
+        std::cout << "Invalid triangle, cannot calculate normal" << std::endl;
+        tr1.dump();
+        exit(2);
+    }
     Vector_t n2 = tr2.get_normal();
+    if ((!n2.is_valid()) || is_zero(n2))
+    {
+        std::cout << "Invalid triangle, cannot calculate normal" << std::endl;
+        tr2.dump();
+        exit(2);
+    }
 
     if (n1 == n2 || n1 == -n2)
     {
