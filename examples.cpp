@@ -12,14 +12,8 @@ int line_and_line();
 
 int main()
 {
-    Boxed_triangle_t triangle1{{2, 0, 0}, {0, 2, 0}, {0, 0, 0}};
-
-    float x1, y1, z1,
-          x2, y2, z2,
-          x3, y3, z3;
-    std::cin >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3;
-
-    Boxed_triangle_t triangle2{{x1, y1, z1}, {x2, y2, z2}, {x3, y3, z3}};
+    Boxed_triangle_t triangle1{{-1, 0, 0}, {1, 1, 0}, {1, -1, 0}};
+    Boxed_triangle_t triangle2{{-3, 0, 0}, {3, 3, 0}, {3, -3, 0}};
 
     if (lookup_intersection(triangle1, triangle2))
     {

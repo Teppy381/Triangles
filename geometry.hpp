@@ -31,6 +31,13 @@ struct Point_t
     }
 };
 
+Point_t scan_point()
+{
+    float x, y, z;
+    std::cin >> x >> y >> z;
+    return Point_t{x, y, z};
+}
+
 struct Vector_t : public Point_t
 {
     using Point_t::Point_t;
@@ -168,6 +175,11 @@ struct Boxed_triangle_t : public Triangle_t
     }
 };
 
+Boxed_triangle_t scan_boxed_triangle()
+{
+    return Boxed_triangle_t{scan_point(), scan_point(), scan_point()};
+}
+
 
 bool boxes_intersect(const Boxed_triangle_t& tr1, const Boxed_triangle_t& tr2)
 {
@@ -285,10 +297,10 @@ bool triangle_line_segment_coplanar_intersection(Triangle_t& tr, Point_t& P1, Po
 
 bool lookup_coplanar_intersection(Triangle_t& tr1, Triangle_t& tr2)
 {
-    Point_t T11 = tr1.e1;
+    Point_t T11 = tr1.P;
     Point_t T12 = tr1.e1 + tr1.P;
     Point_t T13 = tr1.e2 + tr1.P;
-    Point_t T21 = tr2.e1;
+    Point_t T21 = tr2.P;
     Point_t T22 = tr2.e1 + tr2.P;
     Point_t T23 = tr2.e2 + tr2.P;
     return triangle_line_segment_coplanar_intersection(tr2, T11, T12) ||
@@ -296,7 +308,9 @@ bool lookup_coplanar_intersection(Triangle_t& tr1, Triangle_t& tr2)
            triangle_line_segment_coplanar_intersection(tr2, T12, T13) ||
            triangle_line_segment_coplanar_intersection(tr1, T21, T22) ||
            triangle_line_segment_coplanar_intersection(tr1, T21, T23) ||
-           triangle_line_segment_coplanar_intersection(tr1, T22, T23);
+           triangle_line_segment_coplanar_intersection(tr1, T22, T23) ||
+           triangle_point_coplanar_intersection(tr1, T21) ||
+           triangle_point_coplanar_intersection(tr2, T11);
 }
 
 bool triangle_line_segment_intersection(Triangle_t& tr, Point_t P1, Point_t P2)
@@ -388,6 +402,7 @@ bool lookup_intersection(Boxed_triangle_t& tr1, Boxed_triangle_t& tr2)
     {
         if (is_zero(dot_product(n1, R))) // triangles are in the same plane
         {
+            // std::cout << "Triangles are in the same plane" << std::endl;
             return lookup_coplanar_intersection(tr1, tr2);
         }
         return false; // parallel planes
