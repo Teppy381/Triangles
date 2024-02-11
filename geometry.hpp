@@ -3,6 +3,9 @@
 #include <iostream>
 #include <cmath>
 
+namespace geometry
+{
+
 struct Point_t
 {
     float x = NAN, y = NAN, z = NAN;
@@ -18,7 +21,7 @@ struct Point_t
         return !(std::isnan(x) || std::isnan(y) || std::isnan(z));
     }
 
-    bool operator==(const Point_t &rhs) const
+    bool operator==(const Point_t& rhs) const
     {
         assert((*this).is_valid() && rhs.is_valid());
         return (equal(x, rhs.x) && equal(y, rhs.y) && equal(z, rhs.z));
@@ -107,22 +110,6 @@ float dot_product(const Vector_t& vec1, const Vector_t& vec2)
 float triple_product(const Vector_t& vec1, const Vector_t& vec2, const Vector_t& vec3)
 {
     return dot_product(vec1, cross_product(vec2, vec3));
-}
-
-float min(float x1, float x2, float x3)
-{
-    float min = x1;
-    if (x2 < min) {min = x2;}
-    if (x3 < min) {min = x3;}
-    return min;
-}
-
-float max(float x1, float x2, float x3)
-{
-    float max = x1;
-    if (x2 > max) {max = x2;}
-    if (x3 > max) {max = x3;}
-    return max;
 }
 
 
@@ -377,7 +364,7 @@ bool lookup_intersection(Boxed_triangle_t& tr1, Boxed_triangle_t& tr2)
 
     if (boxes_intersect(tr1, tr2) == false)
     {
-        std::cout << "Boxes do not intersect" << std::endl;
+        // std::cout << "Boxes do not intersect" << std::endl;
         return false;
     }
 
@@ -409,3 +396,5 @@ bool lookup_intersection(Boxed_triangle_t& tr1, Boxed_triangle_t& tr2)
     }
     return lookup_non_coplanar_intersection(tr1, tr2);
 }
+
+} // namespace geometry

@@ -12,8 +12,8 @@ int line_and_line();
 
 int main()
 {
-    Boxed_triangle_t triangle1{{-1, 0, 0}, {1, 1, 0}, {1, -1, 0}};
-    Boxed_triangle_t triangle2{{-3, 0, 0}, {3, 3, 0}, {3, -3, 0}};
+    geometry::Boxed_triangle_t triangle1{{-1, 0, 0}, {1, 1, 0}, {1, -1, 0}};
+    geometry::Boxed_triangle_t triangle2{{-3, 0, 0}, {3, 3, 0}, {3, -3, 0}};
 
     if (lookup_intersection(triangle1, triangle2))
     {
@@ -28,13 +28,13 @@ int main()
 
 int line_and_line()
 {
-    Point_t A1{2, 0, 0};
-    Point_t A2{0, 2, 0};
-    Point_t B1{0, 0, 0};
+    geometry::Point_t A1{2, 0, 0};
+    geometry::Point_t A2{0, 2, 0};
+    geometry::Point_t B1{0, 0, 0};
 
     float x1, x2, x3;
     std::cin >> x1 >> x2 >> x3;
-    Point_t B2{x1, x2, x3};
+    geometry::Point_t B2{x1, x2, x3};
 
     std::cout << line_segment_line_segment_coplanar_intersection(A1, A2, B1, B2) << std::endl;
     return 0;
@@ -42,11 +42,11 @@ int line_and_line()
 
 int point_and_triangle()
 {
-    Triangle_t my_triangle{{0, 0, 0}, {2, 0, 0}, {0, 2, 0}};
+    geometry::Triangle_t my_triangle{{0, 0, 0}, {2, 0, 0}, {0, 2, 0}};
     float x1, x2, x3;
     std::cin >> x1 >> x2 >> x3;
 
-    Point_t my_point{x1, x2, x3};
+    geometry::Point_t my_point{x1, x2, x3};
 
     SHOW(triangle_point_coplanar_intersection(my_triangle, my_point));
     return 0;
@@ -57,10 +57,10 @@ int vectors()
 {
     float x1, x2, x3;
     std::cin >> x1 >> x2 >> x3;
-    std::cout << "max: " << max(x1, x2, x3) << std::endl;
-    std::cout << "min: " << min(x1, x2, x3) << std::endl;
+    std::cout << "max: " << geometry::max(x1, x2, x3) << std::endl;
+    std::cout << "min: " << geometry::min(x1, x2, x3) << std::endl;
 
-    Vector_t vec{x1, x2, x3};
+    geometry::Vector_t vec{x1, x2, x3};
     (vec * 100).dump();
     (-vec).dump();
     (vec + vec).dump();
@@ -70,9 +70,9 @@ int vectors()
 
 int products()
 {
-    Vector_t v1{1, 1, 0};
-    Vector_t v2{0, 1, 1};
-    Vector_t v3{1, 0, 1};
+    geometry::Vector_t v1{1, 1, 0};
+    geometry::Vector_t v2{0, 1, 1};
+    geometry::Vector_t v3{1, 0, 1};
     SHOW(dot_product(v1, v2));
 
     std::cout << "cross_product(v1, v2) == " ;
@@ -87,10 +87,10 @@ int point_and_vector()
 {
     std::cout << "HELLO!!!" << std::endl;
 
-    Point_t my_point{23, 252, 235};
+    geometry::Point_t my_point{23, 252, 235};
 
-    Vector_t my_vector{8, 6, 0};
-    Vector_t second_vector = {3, 4, 4};
+    geometry::Vector_t my_vector{8, 6, 0};
+    geometry::Vector_t second_vector = {3, 4, 4};
     second_vector = {23, 252, 235};
 
     my_point.dump();
