@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 
 static const float tolerance = 0.00001;

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "float_cmp.hpp"
 #include "cassert"
 #include <iostream>

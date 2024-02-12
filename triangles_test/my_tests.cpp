@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "../geometry.hpp"
 
-TEST(Triangles, Intersection_test1)
+TEST(Triangles, Simple_Intersection1)
 {
     geometry::Boxed_triangle_t triangle1{{-3, 3, 0}, {3, 3, 0}, {-3, -3, 0}};
     geometry::Boxed_triangle_t triangle2{{0, 0, 0}, {3, 0, 0}, {3, -3, 0}};
@@ -9,7 +9,7 @@ TEST(Triangles, Intersection_test1)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test2)
+TEST(Triangles, Simple_Intersection2)
 {
     geometry::Boxed_triangle_t triangle1{{-1, 0, 0}, {1, 1, 0}, {1, -1, 0}};
     geometry::Boxed_triangle_t triangle2{{-3, 0, 0}, {3, 3, 0}, {3, -3, 0}};
@@ -17,7 +17,7 @@ TEST(Triangles, Intersection_test2)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test3)
+TEST(Triangles, Simple_Intersection3)
 {
     geometry::Boxed_triangle_t triangle1{{-3, -3, 0}, {-3, 3, 0}, {3, 3, 0}};
     geometry::Boxed_triangle_t triangle2{{-1, -1, 0}, {-1, 3, 0}, {1, 3, 0}};
@@ -25,7 +25,7 @@ TEST(Triangles, Intersection_test3)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test4)
+TEST(Triangles, Simple_Intersection4)
 {
     geometry::Boxed_triangle_t triangle1{{-3, 0, 0}, {-3, 3, 0}, {3, 0, 0}};
     geometry::Boxed_triangle_t triangle2{{-2, 0, 0}, {-2, -3, 0}, {2, 0, 0}};
@@ -33,7 +33,7 @@ TEST(Triangles, Intersection_test4)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test5)
+TEST(Triangles, Simple_Intersection5)
 {
     geometry::Boxed_triangle_t triangle1{{-3, 3, 0}, {3, 3, 0}, {-3, -3, 0}};
     geometry::Boxed_triangle_t triangle2{{-3, 3, 0}, {3, 3, 0}, {-3, 0, 0}};
@@ -41,7 +41,7 @@ TEST(Triangles, Intersection_test5)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test6)
+TEST(Triangles, Simple_Intersection6)
 {
     geometry::Boxed_triangle_t triangle1{{-3, 3, 0}, {3, 3, 0}, {-3, -1, 0}};
     geometry::Boxed_triangle_t triangle2{{3, -3, 0}, {-3, -3, 0}, {-3, 1, 0}};
@@ -49,7 +49,7 @@ TEST(Triangles, Intersection_test6)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test7)
+TEST(Triangles, Simple_Intersection7)
 {
     geometry::Boxed_triangle_t triangle1{{-3, 3, 0}, {3, 3, 0}, {-3, -3, 0}};
     geometry::Boxed_triangle_t triangle2{{3, 2, 0}, {-2, -3, 0}, {-2, 2, 0}};
@@ -57,7 +57,7 @@ TEST(Triangles, Intersection_test7)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test8)
+TEST(Triangles, Simple_Intersection8)
 {
     geometry::Boxed_triangle_t triangle1{{-3, 3, 0}, {3, 3, 0}, {-3, -3, 0}};
     geometry::Boxed_triangle_t triangle2{{3, 0, 0}, {3, -3, 0}, {-2, 2, 0}};
@@ -65,7 +65,7 @@ TEST(Triangles, Intersection_test8)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test9)
+TEST(Triangles, Simple_Intersection9)
 {
     geometry::Boxed_triangle_t triangle1{{-1, 1, 0}, {3, 1, 0}, {-1, -3, 0}};
     geometry::Boxed_triangle_t triangle2{{0, 0, 0}, {-3, 0, 0}, {0, 3, 0}};
@@ -73,7 +73,7 @@ TEST(Triangles, Intersection_test9)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test10)
+TEST(Triangles, Simple_Intersection10)
 {
     geometry::Boxed_triangle_t triangle1{{-1, 1, 0}, {3, 1, 0}, {-1, -3, 0}};
     geometry::Boxed_triangle_t triangle2{{0, 2, 0}, {3, -3, 0}, {0, -3, 0}};
@@ -81,7 +81,7 @@ TEST(Triangles, Intersection_test10)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test11)
+TEST(Triangles, Simple_Intersection11)
 {
     geometry::Boxed_triangle_t triangle1{{-2, 2, 0}, {3, 2, 0}, {-2, -3, 0}};
     geometry::Boxed_triangle_t triangle2{{-3, 2, 0}, {0, 3, 0}, {0, -3, 0}};
@@ -89,7 +89,7 @@ TEST(Triangles, Intersection_test11)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test12)
+TEST(Triangles, Simple_Intersection12)
 {
     geometry::Boxed_triangle_t triangle1{{0, 3, 0}, {-3, 0, 0}, {-3, 3, 0}};
     geometry::Boxed_triangle_t triangle2{{3, 3, 0}, {0, 3, 0}, {3, 0, 0}};
@@ -97,7 +97,7 @@ TEST(Triangles, Intersection_test12)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test13)
+TEST(Triangles, Simple_Intersection13)
 {
     geometry::Boxed_triangle_t triangle1{{0, 3, 0}, {-3, 0, 0}, {-3, 3, 0}};
     geometry::Boxed_triangle_t triangle2{{3, 0, 0}, {3, -3, 0}, {0, -3, 0}};
@@ -105,7 +105,7 @@ TEST(Triangles, Intersection_test13)
     ASSERT_EQ(false, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test14)
+TEST(Triangles, Simple_Intersection14)
 {
     geometry::Boxed_triangle_t triangle1{{-2, 0, 0}, {2, 0, 0}, {0, 0, 2}};
     geometry::Boxed_triangle_t triangle2{{0, 0, 1}, {2, 2, 0}, {-2, -2, 0}};
@@ -113,7 +113,7 @@ TEST(Triangles, Intersection_test14)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test15)
+TEST(Triangles, Simple_Intersection15)
 {
     geometry::Boxed_triangle_t triangle1{{0, -1.5, 0}, {0, -1, 0}, {2, 3, 2}};
     geometry::Boxed_triangle_t triangle2{{-1.55, 1.34, 0}, {-1.83, -1.42, 0}, {-2.54, 1.3, 2}};
@@ -121,7 +121,7 @@ TEST(Triangles, Intersection_test15)
     ASSERT_EQ(false, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test16)
+TEST(Triangles, Simple_Intersection16)
 {
     geometry::Boxed_triangle_t triangle1{{0, -1.5, 0}, {0, -1, 0}, {0, 0, 2}};
     geometry::Boxed_triangle_t triangle2{{-1, 1.78, 0}, {-1, -2.38, 0}, {-1, 0, 3}};
@@ -129,7 +129,7 @@ TEST(Triangles, Intersection_test16)
     ASSERT_EQ(false, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test17)
+TEST(Triangles, Simple_Intersection17)
 {
     geometry::Boxed_triangle_t triangle1{{201, -753, 646}, {-65, -910, -312}, {103, -13, -963}};
     geometry::Boxed_triangle_t triangle2{{-85, -277, 871}, {670, -132, -661}, {-1000, 343, 585}};
@@ -137,7 +137,7 @@ TEST(Triangles, Intersection_test17)
     ASSERT_EQ(false, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test18)
+TEST(Triangles, Simple_Intersection18)
 {
     geometry::Boxed_triangle_t triangle1{{201, -753, 646}, {-65, -910, -312}, {103, -13, -963}};
     geometry::Boxed_triangle_t triangle2{{-736, 370, -74}, {-538, -307, -478}, {341, -773, 903}};
@@ -145,7 +145,7 @@ TEST(Triangles, Intersection_test18)
     ASSERT_EQ(false, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test19)
+TEST(Triangles, Simple_Intersection19)
 {
     geometry::Boxed_triangle_t triangle1{{201, -753, 646}, {-65, -910, -312}, {103, -13, -963}};
     geometry::Boxed_triangle_t triangle2{{644, 181, 138 }, {269, 679, 388}, {784, 669, 353}};
@@ -153,13 +153,17 @@ TEST(Triangles, Intersection_test19)
     ASSERT_EQ(false, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-TEST(Triangles, Intersection_test20)
+TEST(Triangles, Simple_Intersection20)
 {
     geometry::Boxed_triangle_t triangle1{{-3, 3, 0}, {3, 3, 0}, {-3, -3, 0}};
     geometry::Boxed_triangle_t triangle2{{0, 0, 0}, {-3, 0, 0}, {0, 3, 0}};
 
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
+
+// TEST(Triangles, E2E_1)
+// {
+// }
 
 
 

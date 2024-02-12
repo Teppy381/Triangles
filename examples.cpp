@@ -1,5 +1,7 @@
 #include <iostream>
 #include "geometry.hpp"
+#include <vector>
+#include <memory>
 
 #define SHOW(...) \
     std::cout << #__VA_ARGS__ << " == " << __VA_ARGS__ << '\n'
@@ -9,8 +11,56 @@ int products();
 int vectors();
 int point_and_triangle();
 int line_and_line();
+int triangle_and_triangle();
 
 int main()
+{
+    size_t count;
+    std::cin >> count;
+    std::unique_ptr<bool[]> intersection_count{new bool[count]()};
+
+    std::vector<geometry::Boxed_triangle_t> triangles;
+
+    for(size_t i = 0; i != count; ++i)
+    {
+        triangles.push_back(geometry::scan_boxed_triangle());
+    }
+    for(size_t i = 0; i != count; ++i)
+    {
+        if (intersection_count[i] == true)
+        {
+            continue;
+        }
+        for(size_t j = 0; j != count; ++j)
+        {
+            if (geometry::lookup_intersection(triangles[i], triangles[j]) && i != j)
+            {
+                intersection_count[i] = true;
+                intersection_count[j] = true;
+                break;
+            }
+        }
+    }
+
+    bool found_intersection = false;
+    for(size_t i = 0; i != count; ++i)
+    {
+        if (intersection_count[i])
+        {
+            std::cout << i << " ";
+            found_intersection = true;
+        }
+    }
+    if (!found_intersection)
+    {
+        std::cout << "No intersections found";
+
+    }
+    std::cout << std::endl;
+    return 0;
+}
+
+int triangle_and_triangle()
 {
     geometry::Boxed_triangle_t triangle1{{-1, 0, 0}, {1, 1, 0}, {1, -1, 0}};
     geometry::Boxed_triangle_t triangle2{{-3, 0, 0}, {3, 3, 0}, {3, -3, 0}};
