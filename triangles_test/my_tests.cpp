@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
-#include "../geometry.hpp"
+#include <fstream>
+#include <string>
+#include "../input.hpp"
 
 TEST(Triangles, Simple_Intersection1)
 {
@@ -161,9 +163,46 @@ TEST(Triangles, Simple_Intersection20)
     ASSERT_EQ(true, geometry::lookup_intersection(triangle1, triangle2));
 }
 
-// TEST(Triangles, E2E_1)
-// {
-// }
 
+const std::string filepath = "..\\..\\triangles_test\\E2E tests\\";
 
+void test_file(std::string filename)
+{
+    std::ifstream input{filepath + filename};
+    if (!input.is_open())
+    {
+        throw std::runtime_error{"Unable to open file " + filepath + filename};
+    }
+    auto cinbuf = std::cin.rdbuf(input.rdbuf());
 
+    std::vector<geometry::Boxed_triangle_t> triangles = geometry::scan_triangles();
+    std::vector<bool> intersection_list = geometry::check_for_intersections(triangles);
+
+    std::vector<bool> correct_intersection_list;
+    for(int i = 0; i < triangles.size(); ++i)
+    {
+        correct_intersection_list.emplace_back(false);
+    }
+
+    size_t num;
+    std::cin >> num;
+    while (std::cin.good())
+    {
+        correct_intersection_list[num - 1] = true;
+        std::cin >> num;
+    }
+
+    std::cin.rdbuf(cinbuf);
+
+    ASSERT_EQ(intersection_list, correct_intersection_list);
+}
+
+TEST(Triangles, E2E_1)
+{
+    test_file("1.txt");
+}
+
+TEST(Triangles, E2E_2)
+{
+    test_file("2.txt");
+}

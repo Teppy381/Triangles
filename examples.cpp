@@ -1,5 +1,5 @@
 #include <iostream>
-#include "geometry.hpp"
+#include "input.hpp"
 #include <vector>
 #include <memory>
 
@@ -15,6 +15,8 @@ int triangle_and_triangle();
 
 int main()
 {
+    int calls = 0;
+
     size_t count;
     std::cin >> count;
     std::unique_ptr<bool[]> intersection_count{new bool[count]()};
@@ -31,9 +33,24 @@ int main()
         {
             continue;
         }
-        for(size_t j = 0; j != count; ++j)
+        for(size_t j = 0; j < i; ++j)
         {
-            if (geometry::lookup_intersection(triangles[i], triangles[j]) && i != j)
+            if (intersection_count[j] == false)
+            {
+                continue;
+            }
+            calls++;
+            if (geometry::lookup_intersection(triangles[i], triangles[j]))
+            {
+                intersection_count[i] = true;
+                // intersection_count[j] already true;
+                break;
+            }
+        }
+        for(size_t j = i + 1; j < count; ++j)
+        {
+            calls++;
+            if (geometry::lookup_intersection(triangles[i], triangles[j]))
             {
                 intersection_count[i] = true;
                 intersection_count[j] = true;
@@ -56,7 +73,7 @@ int main()
         std::cout << "No intersections found";
 
     }
-    std::cout << std::endl;
+    std::cout << "calls: " << calls << std::endl;
     return 0;
 }
 
