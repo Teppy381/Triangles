@@ -188,7 +188,7 @@ void test_file(std::string filename)
     std::cin >> num;
     while (std::cin.good())
     {
-        correct_intersection_list[num - 1] = true;
+        correct_intersection_list[num] = true;
         std::cin >> num;
     }
 
@@ -205,4 +205,46 @@ TEST(Triangles, E2E_1)
 TEST(Triangles, E2E_2)
 {
     test_file("2.txt");
+}
+
+TEST(Triangles, E2E_3)
+{
+    test_file("3.txt");
+}
+
+TEST(Triangles, E2E_4)
+{
+    test_file("4.txt");
+}
+
+TEST(Triangles, E2E_5)
+{
+    test_file("5.txt");
+}
+
+TEST(Triangles, E2E_6)
+{
+    test_file("6.txt");
+}
+
+TEST(Triangles, E2E_7)
+{
+    test_file("7.txt");
+}
+
+TEST(Triangles, E2E_8)
+{
+    test_file("8.txt");
+}
+
+// unsure, python script cannot solve
+TEST(Triangles, E2E_9)
+{
+    test_file("9.txt");
+}
+
+// unsure, python script cannot solve
+TEST(Triangles, E2E_10)
+{
+    test_file("10.txt");
 }

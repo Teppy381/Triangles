@@ -217,14 +217,30 @@ bool triangle_point_coplanar_intersection(const Triangle_t& tr, const Point_t& A
 // assuming that all points are on the same line
 bool point_in_line_segment_intersection(const Point_t& A1, const Point_t& A2, const Point_t& B)
 {
-    return (B.x <= A1.x && B.x >= A2.x) || (B.x >= A1.x && B.x <= A2.x);
+    if (!equal(A1.x, A2.x))
+    {
+        return (B.x <= A1.x && B.x >= A2.x) || (B.x >= A1.x && B.x <= A2.x);
+    }
+    else if (!equal(A1.y, A2.y))
+    {
+        return (B.y <= A1.y && B.y >= A2.y) || (B.y >= A1.y && B.y <= A2.y);
+    }
+    else if (!equal(A1.z, A2.z))
+    {
+        return (B.z <= A1.z && B.z >= A2.z) || (B.z >= A1.z && B.z <= A2.z);
+    }
+    else // A1 == A2
+    {
+        // throw std::runtime_error("point_in_line_segment_intersection: points in line segment are equal!");
+        return A1 == B;
+    }
 }
 
 bool line_segment_line_segment_coplanar_intersection(const Point_t& A1, const Point_t& A2,
                                                      const Point_t& B1, const Point_t& B2)
 {
     Vector_t normal = cross_product({A1, A2}, {B1, B2});
-    if (is_zero(normal.x) && is_zero(normal.y) && is_zero(normal.z)) // collinear lines
+    if (is_zero(normal)) // => collinear lines
     {
         return is_zero(cross_product({A1, A2}, {A1, B2}));
     }
@@ -265,7 +281,7 @@ bool line_segment_line_segment_coplanar_intersection(const Point_t& A1, const Po
 
 bool triangle_line_segment_coplanar_intersection(const Triangle_t& tr, const Point_t& P1, const Point_t& P2)
 {
-    Point_t T1 = tr.e1;
+    Point_t T1 = tr.P;
     Point_t T2 = tr.e1 + tr.P;
     Point_t T3 = tr.e2 + tr.P;
 

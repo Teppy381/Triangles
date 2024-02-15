@@ -12,8 +12,83 @@ int vectors();
 int point_and_triangle();
 int line_and_line();
 int triangle_and_triangle();
+int better_algorithm();
+int check_one_triangle();
 
 int main()
+{
+    using namespace geometry;
+    Boxed_triangle_t tr1 = scan_boxed_triangle();
+    Boxed_triangle_t tr2 = scan_boxed_triangle();
+
+    Point_t A1 = tr2.P;
+    Point_t A2 = tr2.e2 + tr2.P;
+
+    Point_t B1 = tr1.P;
+    Point_t B2 = tr1.e1 + tr1.P;
+    Vector_t normal = cross_product({A1, A2}, {B1, B2});
+
+    // A1.dump();
+    // A2.dump();
+    // B1.dump();
+    // B2.dump();
+
+    SHOW(is_zero(triple_product({A1, A2}, normal, {A1, B2})));
+
+    SHOW(point_in_line_segment_intersection(A1, A2, B2));
+
+    SHOW(line_segment_line_segment_coplanar_intersection(A1, A2, B1, B2));
+
+    return 0;
+}
+
+
+int generator()
+{
+    geometry::Point_t P1{-20, 0, 0};
+    geometry::Point_t P2{10, -90, 0};
+    geometry::Point_t P3{-300, 50, 0};
+    geometry::Boxed_triangle_t tr{P1, P2, P3};
+    for(size_t k = 0; k < 1000; ++k)
+    {
+        float i = k;
+        tr.dump();
+        P1 = geometry::Vector_t{1, 2.092743, i*i/10000} + P1;
+        P2 = geometry::Vector_t{1, 2.034247, 3} + P2;
+        P3 = geometry::Vector_t{1, 2.192768, -i*i/8000} + P3;
+        tr = {P1, P2, P3};
+    }
+    return 0;
+}
+
+int check_one_triangle()
+{
+    std::vector<geometry::Boxed_triangle_t> triangles = geometry::scan_triangles();
+    size_t count = triangles.size();
+
+    std::cout << "Which triangle to check?" << std::endl;
+    size_t tr_num;
+    std::cin >> tr_num;
+
+    std::vector<bool> intersection_list = check_for_intersections(triangles, tr_num);
+
+    std::cout << "Intersections with ";
+    triangles[tr_num].dump();
+    std::cout << std::endl;
+
+    for(int i = 0; i < count; ++i)
+    {
+        if (intersection_list[i])
+        {
+            std::cout << i << " ";
+            triangles[i].dump();
+        }
+    }
+    std::cout << std::endl;
+    return 0;
+}
+
+int better_algorithm()
 {
     int calls = 0;
 
