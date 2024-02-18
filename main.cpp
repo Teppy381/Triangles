@@ -16,7 +16,7 @@ int main()
     {
         if (intersection_list[i] > 0)
         {
-            std::cout << i << " ";
+            std::cout << i << std::endl;
             found_intersection = true;
         }
     }

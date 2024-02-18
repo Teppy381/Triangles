@@ -14,7 +14,7 @@ Point_t scan_point()
 {
     float x, y, z;
     std::cin >> x >> y >> z;
-    if (!std::cin.good())
+    if (std::cin.fail())
     {
         // std::cout << x << ", " << y << ", " << z << std::endl;
         throw std::runtime_error{"Cannot read coordinates"};
