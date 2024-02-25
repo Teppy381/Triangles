@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <string>
-#include "../src/input.hpp"
+#include "input.hpp"
 
 TEST(Triangles, Simple_Intersection1)
 {
