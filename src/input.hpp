@@ -10,7 +10,7 @@
 namespace geometry
 {
 
-Point_t scan_point()
+static Point_t scan_point()
 {
     float x, y, z;
     std::cin >> x >> y >> z;
@@ -22,12 +22,12 @@ Point_t scan_point()
     return Point_t{x, y, z};
 }
 
-Boxed_triangle_t scan_boxed_triangle()
+static Boxed_triangle_t scan_boxed_triangle()
 {
     return Boxed_triangle_t{scan_point(), scan_point(), scan_point()};
 }
 
-std::vector<geometry::Boxed_triangle_t> scan_triangles()
+static std::vector<geometry::Boxed_triangle_t> scan_triangles()
 {
     size_t count;
     std::cin >> count;
@@ -41,7 +41,7 @@ std::vector<geometry::Boxed_triangle_t> scan_triangles()
 }
 
 // return_value[i] is true when triangles[i] intersects other triangle from the triangles
-std::vector<bool> check_for_intersections(const std::vector<Boxed_triangle_t>& triangles)
+static std::vector<bool> check_for_intersections(const std::vector<Boxed_triangle_t>& triangles)
 {
     size_t count = triangles.size();
 
@@ -67,7 +67,7 @@ std::vector<bool> check_for_intersections(const std::vector<Boxed_triangle_t>& t
 }
 
 // return_value[i] is true when triangles[tr_num] intersects triangles[i]
-std::vector<bool> check_for_intersections(const std::vector<Boxed_triangle_t>& triangles, size_t tr_num)
+static std::vector<bool> check_for_intersections(const std::vector<Boxed_triangle_t>& triangles, size_t tr_num)
 {
     size_t count = triangles.size();
     if (tr_num >= count)

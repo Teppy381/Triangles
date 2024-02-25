@@ -7,7 +7,7 @@ static const float tolerance = 0.00001;
 namespace geometry
 {
 
-bool is_zero(float a)
+static bool is_zero(float a)
 {
     if (std::abs(a) < tolerance)
     {
@@ -16,12 +16,12 @@ bool is_zero(float a)
     return false;
 }
 
-bool equal(float a, float b)
+static bool equal(float a, float b)
 {
     return is_zero(a - b);
 }
 
-float min(float x1, float x2, float x3)
+static float min(float x1, float x2, float x3)
 {
     float min = x1;
     if (x2 < min) {min = x2;}
@@ -29,7 +29,7 @@ float min(float x1, float x2, float x3)
     return min;
 }
 
-float max(float x1, float x2, float x3)
+static float max(float x1, float x2, float x3)
 {
     float max = x1;
     if (x2 > max) {max = x2;}

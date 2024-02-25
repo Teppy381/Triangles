@@ -82,12 +82,12 @@ struct Vector_t : public Point_t
 
 };
 
-bool is_zero(const Vector_t& vec)
+static bool is_zero(const Vector_t& vec)
 {
     return is_zero(vec.x) && is_zero(vec.y) && is_zero(vec.z);
 }
 
-Vector_t cross_product(const Vector_t& vec1, const Vector_t& vec2)
+static Vector_t cross_product(const Vector_t& vec1, const Vector_t& vec2)
 {
     assert(vec1.is_valid() && vec2.is_valid());
 
@@ -97,13 +97,13 @@ Vector_t cross_product(const Vector_t& vec1, const Vector_t& vec2)
     return result;
 }
 
-float dot_product(const Vector_t& vec1, const Vector_t& vec2)
+static float dot_product(const Vector_t& vec1, const Vector_t& vec2)
 {
     assert(vec1.is_valid() && vec2.is_valid());
     return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
 }
 
-float triple_product(const Vector_t& vec1, const Vector_t& vec2, const Vector_t& vec3)
+static float triple_product(const Vector_t& vec1, const Vector_t& vec2, const Vector_t& vec3)
 {
     return dot_product(vec1, cross_product(vec2, vec3));
 }
@@ -159,7 +159,7 @@ struct Boxed_triangle_t : public Triangle_t
 };
 
 
-bool boxes_intersect(const Boxed_triangle_t& tr1, const Boxed_triangle_t& tr2)
+static bool boxes_intersect(const Boxed_triangle_t& tr1, const Boxed_triangle_t& tr2)
 {
     if ((tr2.P_min.x > tr1.P_max.x) || (tr2.P_min.y > tr1.P_max.y) || (tr2.P_min.z > tr1.P_max.z)
      || (tr1.P_min.x > tr2.P_max.x) || (tr1.P_min.y > tr2.P_max.y) || (tr1.P_min.z > tr2.P_max.z))
@@ -169,7 +169,7 @@ bool boxes_intersect(const Boxed_triangle_t& tr1, const Boxed_triangle_t& tr2)
     return true;
 }
 
-bool triangle_point_coplanar_intersection(const Triangle_t& tr, const Point_t& A)
+static bool triangle_point_coplanar_intersection(const Triangle_t& tr, const Point_t& A)
 {
     Vector_t vec{tr.P, A};
     // decomposition: vec == tr.e1 * t1 + tr.e2 * t2
@@ -215,7 +215,7 @@ bool triangle_point_coplanar_intersection(const Triangle_t& tr, const Point_t& A
 }
 
 // assuming that all points are on the same line
-bool point_in_line_segment_intersection(const Point_t& A1, const Point_t& A2, const Point_t& B)
+static bool point_in_line_segment_intersection(const Point_t& A1, const Point_t& A2, const Point_t& B)
 {
     if (!equal(A1.x, A2.x))
     {
@@ -236,7 +236,7 @@ bool point_in_line_segment_intersection(const Point_t& A1, const Point_t& A2, co
     }
 }
 
-bool line_segment_line_segment_coplanar_intersection(const Point_t& A1, const Point_t& A2,
+static bool line_segment_line_segment_coplanar_intersection(const Point_t& A1, const Point_t& A2,
                                                      const Point_t& B1, const Point_t& B2)
 {
     Vector_t normal = cross_product({A1, A2}, {B1, B2});
@@ -279,7 +279,7 @@ bool line_segment_line_segment_coplanar_intersection(const Point_t& A1, const Po
 }
 
 
-bool triangle_line_segment_coplanar_intersection(const Triangle_t& tr, const Point_t& P1, const Point_t& P2)
+static bool triangle_line_segment_coplanar_intersection(const Triangle_t& tr, const Point_t& P1, const Point_t& P2)
 {
     Point_t T1 = tr.P;
     Point_t T2 = tr.e1 + tr.P;
@@ -290,7 +290,7 @@ bool triangle_line_segment_coplanar_intersection(const Triangle_t& tr, const Poi
            line_segment_line_segment_coplanar_intersection(P1, P2, T2, T3);
 }
 
-bool lookup_coplanar_intersection(const Triangle_t& tr1, const Triangle_t& tr2)
+static bool lookup_coplanar_intersection(const Triangle_t& tr1, const Triangle_t& tr2)
 {
     Point_t T11 = tr1.P;
     Point_t T12 = tr1.e1 + tr1.P;
@@ -308,7 +308,7 @@ bool lookup_coplanar_intersection(const Triangle_t& tr1, const Triangle_t& tr2)
            triangle_point_coplanar_intersection(tr2, T11);
 }
 
-bool triangle_line_segment_intersection(const Triangle_t& tr, const Point_t P1, const Point_t P2)
+static bool triangle_line_segment_intersection(const Triangle_t& tr, const Point_t P1, const Point_t P2)
 {
     Vector_t L1{P1, tr.P};
     Vector_t L2{P2, tr.P};
@@ -355,7 +355,7 @@ bool triangle_line_segment_intersection(const Triangle_t& tr, const Point_t P1, 
 }
 
 
-bool lookup_non_coplanar_intersection(const Triangle_t& tr1, const Triangle_t& tr2)
+static bool lookup_non_coplanar_intersection(const Triangle_t& tr1, const Triangle_t& tr2)
 {
     return
     triangle_line_segment_intersection(tr1, tr2.P, (Vector_t) tr2.P + tr2.e1) ||
@@ -366,7 +366,7 @@ bool lookup_non_coplanar_intersection(const Triangle_t& tr1, const Triangle_t& t
     triangle_line_segment_intersection(tr2, (Vector_t) tr1.P + tr1.e1, (Vector_t) tr1.P + tr1.e2);
 }
 
-bool lookup_intersection(const Boxed_triangle_t& tr1, const Boxed_triangle_t& tr2)
+static bool lookup_intersection(const Boxed_triangle_t& tr1, const Boxed_triangle_t& tr2)
 {
     assert(tr1.valid() && tr2.valid());
 

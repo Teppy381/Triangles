@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <string>
-#include "../input.hpp"
+#include "../src/input.hpp"
 
 TEST(Triangles, Simple_Intersection1)
 {
@@ -164,7 +164,7 @@ TEST(Triangles, Simple_Intersection20)
 }
 
 
-const std::string filepath = "..\\..\\triangles_test\\E2E tests\\";
+const std::string filepath = "..\\..\\tests\\E2E tests\\";
 
 void test_file(std::string filename)
 {
