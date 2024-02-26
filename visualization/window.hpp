@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <string>
+#include <stdexcept>
 
 namespace yLab
 {
@@ -31,6 +32,14 @@ public:
     bool shouldClose()
     {
         return glfwWindowShouldClose(window);
+    }
+
+    void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface)
+    {
+        if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS)
+        {
+            throw std::runtime_error{"Failed to create window surface"};
+        }
     }
 
 private:
