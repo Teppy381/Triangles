@@ -42,7 +42,7 @@ message(STATUS "Vulkan_LIBRARY = ${Vulkan_LIBRARY}")
 
 add_compile_definitions(SHADERS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/shaders/")
 
-add_executable(vulkan_triangles main.cpp device.cpp pipeline.cpp)
+add_executable(vulkan_triangles main.cpp device.cpp pipeline.cpp swap_chain.cpp first_app.cpp)
 
 target_include_directories(vulkan_triangles PUBLIC ${Vulkan_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(vulkan_triangles glm glfw ${Vulkan_LIBRARY})
