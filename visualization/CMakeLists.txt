@@ -1,19 +1,3 @@
-# add_custom_command(
-# 	OUTPUT "/shaders/simple.frag.spv"
-# 	COMMAND "C:/Proga/PACKAGES/VulkanSDK-1.3.275.0/Bin/glslc.exe" shaders/simple.frag
-# 					 -o "/shaders/simple.frag.spv"
-# 	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/shaders/simple.frag
-# 	VERBATIM)
-
-# add_custom_command(TARGET foo
-#     PRE_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E echo hello
-#     COMMENT "This command will be executed before building foo"
-#     VERBATIM
-#     # no support for depends
-#     # no support for output
-# )
-
 include(FetchContent)
 
 message(STATUS "Fetching glm...")
@@ -40,9 +24,48 @@ find_package(Vulkan REQUIRED)
 message(STATUS "Vulkan_INCLUDE_DIR = ${Vulkan_INCLUDE_DIR}")
 message(STATUS "Vulkan_LIBRARY = ${Vulkan_LIBRARY}")
 
-add_compile_definitions(SHADERS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/shaders/")
+set(SHADERS_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
+
+function(add_shaders TARGET_NAME)
+	set(SHADER_SOURCE_FILES ${ARGN}) # the rest of arguments to this function will be assigned as shader source files
+
+	# Validate that source files have been passed
+	list(LENGTH SHADER_SOURCE_FILES FILE_COUNT)
+	if(FILE_COUNT EQUAL 0)
+		message(FATAL_ERROR "Cannot create a shaders target without any source files")
+	endif()
+
+
+	foreach(SHADER_SOURCE IN LISTS SHADER_SOURCE_FILES)
+		set(SHADER_COMMAND_LIST)
+		cmake_path(ABSOLUTE_PATH SHADER_SOURCE NORMALIZE)
+		cmake_path(GET SHADER_SOURCE FILENAME SHADER_NAME)
+
+		# Build command
+		list(APPEND SHADER_COMMAND_LIST COMMAND)
+		list(APPEND SHADER_COMMAND_LIST Vulkan::glslc)
+		list(APPEND SHADER_COMMAND_LIST "${SHADER_SOURCE}")
+		list(APPEND SHADER_COMMAND_LIST "-o")
+		list(APPEND SHADER_COMMAND_LIST "${SHADERS_OUTPUT_PATH}/${SHADER_NAME}.spv")
+
+		# Add product
+		set(SHADER_PRODUCT "${SHADERS_OUTPUT_PATH}/${SHADER_NAME}.spv")
+
+		add_custom_target(${SHADER_NAME} ALL
+			${SHADER_COMMAND_LIST}
+			COMMENT "Compiling shader ${SHADER_NAME}"
+			SOURCES ${SHADER_SOURCE}
+			BYPRODUCTS ${SHADER_PRODUCT}
+		)
+	endforeach()
+endfunction()
+
+
+add_compile_definitions(SHADERS_PATH="${SHADERS_OUTPUT_PATH}/")
 
 add_executable(vulkan_triangles main.cpp device.cpp pipeline.cpp swap_chain.cpp first_app.cpp)
+
+add_shaders(vulkan_triangles shaders/simple.frag shaders/simple.vert)
 
 target_include_directories(vulkan_triangles PUBLIC ${Vulkan_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(vulkan_triangles glm glfw ${Vulkan_LIBRARY})

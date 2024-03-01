@@ -88,6 +88,11 @@ Pipeline::~Pipeline()
     vkDestroyPipeline(device.device(), graphics_pipeline, nullptr);
 }
 
+void Pipeline::bind(VkCommandBuffer command_buffer)
+{
+    vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline);
+}
+
 PipelineConfigInfo Pipeline::defaultPipelineConfigInfo(uint32_t width, uint32_t height)
 {
     PipelineConfigInfo config_info{};
