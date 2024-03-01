@@ -10,6 +10,7 @@ namespace yLab
 
 FirstApp::FirstApp()
 {
+    loadModels();
     createPipelineLayout();
     createPipeline();
     createCommandBuffers();
@@ -29,6 +30,17 @@ void FirstApp::run()
     }
 
     vkDeviceWaitIdle(device.device());
+}
+
+void FirstApp::loadModels()
+{
+    std::vector<Model::Vertex> vertices{
+        {{0.0f, -0.5f}},
+        {{0.5f, 0.5f}},
+        {{-0.5f, 0.5f}}
+    };
+
+    model = std::make_unique<Model>(device, vertices);
 }
 
 void FirstApp::createPipelineLayout()
@@ -98,7 +110,8 @@ void FirstApp::createCommandBuffers()
         vkCmdBeginRenderPass(command_buffers[i], &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);
 
         pipeline->bind(command_buffers[i]);
-        vkCmdDraw(command_buffers[i], 3, 1, 0, 0);
+        model->bind(command_buffers[i]);
+        model->draw(command_buffers[i]);
 
         vkCmdEndRenderPass(command_buffers[i]);
         if (vkEndCommandBuffer(command_buffers[i]) != VK_SUCCESS)

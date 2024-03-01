@@ -2,6 +2,7 @@
 #include "pipeline.hpp"
 #include "device.hpp"
 #include "swap_chain.hpp"
+#include "model.hpp"
 
 #include <memory>
 #include <string>
@@ -26,6 +27,7 @@ public:
     std::string shaders_path = SHADERS_PATH; // defined at cmake configure time
 
 private:
+    void loadModels();
     void createPipelineLayout();
     void createPipeline();
     void createCommandBuffers();
@@ -40,6 +42,7 @@ private:
     VkPipelineLayout pipeline_layout;
 
     std::vector<VkCommandBuffer> command_buffers;
+    std::unique_ptr<Model> model;
 };
 
 } // namespace yLab
