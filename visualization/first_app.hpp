@@ -31,12 +31,15 @@ private:
     void createPipelineLayout();
     void createPipeline();
     void createCommandBuffers();
+    void freeCommandBuffers();
     void drawFrame();
+    void recreateSwapChain();
+    void recordCommandBuffer(int image_index);
 
     Window window{WIDTH, HEIGHT, "Hello"};
     Device device{window};
-    SwapChain swap_chain{device, window.getExtent()};
 
+    std::unique_ptr<SwapChain> swap_chain;
     std::unique_ptr<Pipeline> pipeline;
 
     VkPipelineLayout pipeline_layout;

@@ -147,16 +147,22 @@ void Device::pickPhysicalDevice()
     }
   }
 
-  // ============================
 
-  for (const auto &device : devices)
+  // for (const auto &device : devices)
+  // {
+  //   if (isDeviceSuitable(device))
+  //   {
+  //     physicalDevice = device;
+  //     break;
+  //   }
+  // }
+
+  if (isDeviceSuitable(devices.back()))
   {
-    if (isDeviceSuitable(device))
-    {
-      physicalDevice = device;
-      break;
-    }
+    physicalDevice = devices.back();
   }
+
+  // ============================
 
   if (physicalDevice == VK_NULL_HANDLE)
   {
@@ -164,7 +170,7 @@ void Device::pickPhysicalDevice()
   }
 
   vkGetPhysicalDeviceProperties(physicalDevice, &properties);
-  std::cout << "physical device: " << properties.deviceName << std::endl;
+  std::cout << "Physical device: " << properties.deviceName << std::endl;
 }
 
 void Device::createLogicalDevice()
