@@ -1,5 +1,9 @@
 #include "first_app.hpp"
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+
 #include <memory>
 #include <array>
 #include <vector>
@@ -7,6 +11,12 @@
 
 namespace yLab
 {
+
+struct SimplePushConstantData
+{
+    glm::vec2 offset;
+    alignas(16) glm::vec3 color;
+};
 
 FirstApp::FirstApp()
 {
@@ -45,12 +55,18 @@ void FirstApp::loadModels()
 
 void FirstApp::createPipelineLayout()
 {
+
+    VkPushConstantRange push_constant_range{};
+    push_constant_range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    push_constant_range.offset = 0;
+    push_constant_range.size = sizeof(SimplePushConstantData);
+
     VkPipelineLayoutCreateInfo pipeline_layout_info{};
     pipeline_layout_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipeline_layout_info.setLayoutCount = 0;
     pipeline_layout_info.pSetLayouts = nullptr;
-    pipeline_layout_info.pushConstantRangeCount = 0;
-    pipeline_layout_info.pPushConstantRanges = nullptr;
+    pipeline_layout_info.pushConstantRangeCount = 1;
+    pipeline_layout_info.pPushConstantRanges = &push_constant_range;
 
     if (vkCreatePipelineLayout(device.device(), &pipeline_layout_info, nullptr, &pipeline_layout)
         != VK_SUCCESS)
@@ -123,13 +139,19 @@ void FirstApp::createCommandBuffers()
 void FirstApp::freeCommandBuffers()
 {
     vkFreeCommandBuffers(
-        device.device(), device.getCommandPool(), static_cast<uint32_t>(command_buffers.size()), command_buffers.data()
+        device.device(),
+        device.getCommandPool(),
+        static_cast<uint32_t>(command_buffers.size()),
+        command_buffers.data()
     );
     command_buffers.clear();
 }
 
 void FirstApp::recordCommandBuffer(int image_index)
 {
+    static int frame = 0;
+    frame = (frame + 1) % 100;
+
     VkCommandBufferBeginInfo begin_info{};
     begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -147,7 +169,7 @@ void FirstApp::recordCommandBuffer(int image_index)
     render_pass_info.renderArea.extent = swap_chain->getSwapChainExtent();
 
     std::array<VkClearValue, 2> clear_values{};
-    clear_values[0].color = {0.1f, 0.1f, 0.1f, 1.0f};
+    clear_values[0].color = {0.01f, 0.01f, 0.01f, 1.0f};
     clear_values[1].depthStencil = {1.0f, 0};
     render_pass_info.clearValueCount = static_cast<uint32_t>(clear_values.size());
     render_pass_info.pClearValues = clear_values.data();
@@ -167,7 +189,23 @@ void FirstApp::recordCommandBuffer(int image_index)
 
     pipeline->bind(command_buffers[image_index]);
     model->bind(command_buffers[image_index]);
-    model->draw(command_buffers[image_index]);
+
+    for (int i = 0; i < 4; ++i)
+    {
+        SimplePushConstantData push{};
+        push.offset = {-0.5f + frame * 0.01f, -0.4f + i * 0.25f};
+        push.color = {frame * 0.005f, 0.8f - frame * 0.005f, 0.2f + i * 0.2f};
+
+        vkCmdPushConstants(
+            command_buffers[image_index],
+            pipeline_layout,
+            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+            0,
+            sizeof(SimplePushConstantData),
+            &push
+        );
+        model->draw(command_buffers[image_index]);
+    }
 
     vkCmdEndRenderPass(command_buffers[image_index]);
     if (vkEndCommandBuffer(command_buffers[image_index]) != VK_SUCCESS)

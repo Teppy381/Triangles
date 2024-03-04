@@ -157,9 +157,9 @@ void Device::pickPhysicalDevice()
   //   }
   // }
 
-  if (isDeviceSuitable(devices.back()))
+  if (isDeviceSuitable(devices.front()))
   {
-    physicalDevice = devices.back();
+    physicalDevice = devices.front();
   }
 
   // ============================
