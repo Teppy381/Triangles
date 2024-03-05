@@ -1,11 +1,13 @@
+#pragma once
+
 #include "window.hpp"
-#include "pipeline.hpp"
 #include "device.hpp"
-#include "swap_chain.hpp"
+#include "renderer.hpp"
 #include "object.hpp"
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace yLab
 {
@@ -17,35 +19,19 @@ public:
     static const int HEIGHT = 800;
 
     FirstApp();
-    ~FirstApp();
+    ~FirstApp() = default;
 
     FirstApp(const FirstApp&) = delete;
     FirstApp& operator=(const FirstApp&) = delete;
 
     void run();
 
-    std::string shaders_path = SHADERS_PATH; // defined at cmake configure time
-
 private:
     void loadObjects();
-    void createPipelineLayout();
-    void createPipeline();
-    void createCommandBuffers();
-    void freeCommandBuffers();
-    void drawFrame();
-    void recreateSwapChain();
-    void recordCommandBuffer(int image_index);
-    void renderObjects(VkCommandBuffer command_buffer);
 
     Window window{WIDTH, HEIGHT, "Hello"};
     Device device{window};
-
-    std::unique_ptr<SwapChain> swap_chain;
-    std::unique_ptr<Pipeline> pipeline;
-
-    VkPipelineLayout pipeline_layout;
-
-    std::vector<VkCommandBuffer> command_buffers;
+    Renderer renderer{window, device};
     std::vector<Object> objects;
 };
 
