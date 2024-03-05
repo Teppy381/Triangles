@@ -3,6 +3,7 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 
 #include <memory>
 #include <array>
@@ -14,13 +15,14 @@ namespace yLab
 
 struct SimplePushConstantData
 {
+    glm::mat2 transform{1.0f};
     glm::vec2 offset;
     alignas(16) glm::vec3 color;
 };
 
 FirstApp::FirstApp()
 {
-    loadModels();
+    loadObjects();
     createPipelineLayout();
     recreateSwapChain();
     createCommandBuffers();
@@ -42,7 +44,7 @@ void FirstApp::run()
     vkDeviceWaitIdle(device.device());
 }
 
-void FirstApp::loadModels()
+void FirstApp::loadObjects()
 {
     std::vector<Model::Vertex> vertices{
         {{0.0f, -0.5f}, {1.0f, 1.0f, 0.0f}},
@@ -50,7 +52,17 @@ void FirstApp::loadModels()
         {{-0.5f, 0.5f}, {1.0f, 0.0f, 1.0f}}
     };
 
-    model = std::make_unique<Model>(device, vertices);
+    auto model = std::make_shared<Model>(device, vertices);
+
+    auto triangle = Object::createObject();
+    triangle.model = model;
+    triangle.color = {0.1f, 0.8f, 0.1f};
+    triangle.transform2d.translation.x = 0.3f;
+    triangle.transform2d.scale = {2.0f, 0.5f};
+    triangle.transform2d.rotation = 0.2f * glm::two_pi<float>();
+
+
+    objects.push_back(std::move(triangle));
 }
 
 void FirstApp::createPipelineLayout()
@@ -149,9 +161,6 @@ void FirstApp::freeCommandBuffers()
 
 void FirstApp::recordCommandBuffer(int image_index)
 {
-    static int frame = 0;
-    frame = (frame + 1) % 100;
-
     VkCommandBufferBeginInfo begin_info{};
     begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -187,30 +196,38 @@ void FirstApp::recordCommandBuffer(int image_index)
     vkCmdSetViewport(command_buffers[image_index], 0, 1, &viewport);
     vkCmdSetScissor(command_buffers[image_index], 0, 1, &scissor);
 
-    pipeline->bind(command_buffers[image_index]);
-    model->bind(command_buffers[image_index]);
+    renderObjects(command_buffers[image_index]);
 
-    for (int i = 0; i < 4; ++i)
+    vkCmdEndRenderPass(command_buffers[image_index]);
+    if (vkEndCommandBuffer(command_buffers[image_index]) != VK_SUCCESS)
     {
+        throw std::runtime_error{"Failed to record command buffer"};
+    }
+}
+
+void FirstApp::renderObjects(VkCommandBuffer command_buffer)
+{
+    pipeline->bind(command_buffer);
+
+    for (auto&& obj : objects)
+    {
+        obj.transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.01f, glm::two_pi<float>());
+
         SimplePushConstantData push{};
-        push.offset = {-0.5f + frame * 0.01f, -0.4f + i * 0.25f};
-        push.color = {frame * 0.005f, 0.8f - frame * 0.005f, 0.2f + i * 0.2f};
+        push.offset = obj.transform2d.translation;
+        push.color = obj.color;
+        push.transform = obj.transform2d.mat2();
 
         vkCmdPushConstants(
-            command_buffers[image_index],
+            command_buffer,
             pipeline_layout,
             VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
             0,
             sizeof(SimplePushConstantData),
             &push
         );
-        model->draw(command_buffers[image_index]);
-    }
-
-    vkCmdEndRenderPass(command_buffers[image_index]);
-    if (vkEndCommandBuffer(command_buffers[image_index]) != VK_SUCCESS)
-    {
-        throw std::runtime_error{"Failed to record command buffer"};
+        obj.model->bind(command_buffer);
+        obj.model->draw(command_buffer);
     }
 }
 

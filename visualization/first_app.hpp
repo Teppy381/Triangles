@@ -2,7 +2,7 @@
 #include "pipeline.hpp"
 #include "device.hpp"
 #include "swap_chain.hpp"
-#include "model.hpp"
+#include "object.hpp"
 
 #include <memory>
 #include <string>
@@ -27,7 +27,7 @@ public:
     std::string shaders_path = SHADERS_PATH; // defined at cmake configure time
 
 private:
-    void loadModels();
+    void loadObjects();
     void createPipelineLayout();
     void createPipeline();
     void createCommandBuffers();
@@ -35,6 +35,7 @@ private:
     void drawFrame();
     void recreateSwapChain();
     void recordCommandBuffer(int image_index);
+    void renderObjects(VkCommandBuffer command_buffer);
 
     Window window{WIDTH, HEIGHT, "Hello"};
     Device device{window};
@@ -45,7 +46,7 @@ private:
     VkPipelineLayout pipeline_layout;
 
     std::vector<VkCommandBuffer> command_buffers;
-    std::unique_ptr<Model> model;
+    std::vector<Object> objects;
 };
 
 } // namespace yLab
