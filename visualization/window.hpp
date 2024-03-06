@@ -20,6 +20,7 @@ public:
         window = glfwCreateWindow(w, h, window_name.c_str(), nullptr, nullptr);
         glfwSetWindowUserPointer(window, this);
         glfwSetFramebufferSizeCallback(window, frameBufferResizeCallback);
+        glfwSetKeyCallback(window, keyCallback);
     }
 
     ~Window()
@@ -51,6 +52,11 @@ public:
         frame_buffer_resized = false;
     }
 
+    GLFWwindow* getGLFWwindow() const
+    {
+        return window;
+    }
+
     void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface)
     {
         if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS)
@@ -66,6 +72,14 @@ private:
         window->frame_buffer_resized = true;
         window->width = width;
         window->height = height;
+    }
+
+    static void keyCallback(GLFWwindow* window_, int key, int scancode, int action, int mods)
+    {
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        {
+            glfwSetWindowShouldClose(window_, GLFW_TRUE);
+        }
     }
 
     int width;

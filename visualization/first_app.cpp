@@ -1,6 +1,8 @@
 #include "first_app.hpp"
+
 #include "render_system.hpp"
 #include "camera.hpp"
+#include "keyboard_controller.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -11,6 +13,7 @@
 #include <array>
 #include <vector>
 #include <stdexcept>
+#include <chrono>
 
 namespace yLab
 {
@@ -24,14 +27,34 @@ void FirstApp::run()
 {
     RenderSystem render_system{device, renderer.getSwapChainRenderPass()};
     Camera camera{};
-    // camera.setViewDirection({0, 0, 0}, {0.5, 0.0, 1.0});
-    camera.setViewTarget({-1, -2, 2}, {0, 0, 0.5});
+
+    auto viewerObject = Object::createObject();
+    viewerObject.transform.translation = {0.2, 0.0, 0.0};
+    KeyboardController camera_controller{};
+
+    auto current_time = std::chrono::high_resolution_clock::now();
+
     while (!window.shouldClose())
     {
         glfwPollEvents();
 
+        auto new_time = std::chrono::high_resolution_clock::now();
+        float frame_time = std::chrono::duration<float, std::chrono::seconds::period>(new_time - current_time).count();
+        current_time = new_time;
+
+        const float MAX_FRAME_TIME = 0.1;
+        frame_time = glm::min(frame_time, MAX_FRAME_TIME);
+
+        // std::cout << "frame_time: " << frame_time << std::endl;
+
+        const glm::vec3 target = {0.0f, 0.0f, 0.5f};
+        camera_controller.moveTowardsTarget(window.getGLFWwindow(), frame_time, viewerObject, target);
+        camera_controller.moveAroundTarget(window.getGLFWwindow(), frame_time, viewerObject, target);
+
+        camera.setViewTarget(viewerObject.transform.translation, target);
+
+
         float aspect = renderer.getAspectRatio();
-        // camera.setOrthographicProjection(-aspect, aspect, -1.0, 1.0, -1.0, 1.0);
         camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 10.0f);
         auto command_buffer = renderer.beginFrame();
         if (command_buffer != nullptr)
@@ -111,13 +134,20 @@ std::unique_ptr<Model> createCubeModel(Device& device, glm::vec3 offset)
 
 void FirstApp::loadObjects()
 {
-    std::shared_ptr<Model> model = createCubeModel(device, {.0f, .0f, .0f});
+    std::shared_ptr<Model> model = createCubeModel(device, {0.0f, 0.0f, 0.0f});
 
-    Object cube = Object::createObject();
-    cube.model = model;
-    cube.transform.translation = {0.0f, 0.0f, 0.5f};
-    cube.transform.scale = {0.5f, 0.5f, 0.5f};
-    objects.push_back(std::move(cube));
+    Object cube1 = Object::createObject();
+    cube1.model = model;
+    cube1.transform.translation = {0.0f, 0.0f, 0.5f};
+    cube1.transform.scale = {0.5f, 0.5f, 0.5f};
+    objects.push_back(std::move(cube1));
+
+    Object cube2 = Object::createObject();
+    cube2.model = model;
+    cube2.transform.translation = {0.0f, 0.0f, 0.0f};
+    cube2.transform.scale = {0.05f, 0.05f, 0.05f};
+    cube2.transform.rotation = {2.0f, 2.0f, 0.0f};
+    objects.push_back(std::move(cube2));
 }
 
 } // namespace yLab

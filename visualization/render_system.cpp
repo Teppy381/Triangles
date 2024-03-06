@@ -74,10 +74,6 @@ void RenderSystem::renderObjects(VkCommandBuffer command_buffer, std::vector<Obj
 
     for (auto&& obj : objects)
     {
-        obj.transform.rotation.x = glm::mod(obj.transform.rotation.x + 0.0017f, glm::two_pi<float>());
-        obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + 0.0132f, glm::two_pi<float>());
-        obj.transform.rotation.z = glm::mod(obj.transform.rotation.z + 0.0011f, glm::two_pi<float>());
-
         SimplePushConstantData push{};
         push.transform = projection_view * obj.transform.mat4();
         push.color = obj.color;
