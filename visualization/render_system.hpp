@@ -3,6 +3,7 @@
 #include "pipeline.hpp"
 #include "device.hpp"
 #include "object.hpp"
+#include "camera.hpp"
 
 #include <memory>
 #include <string>
@@ -20,7 +21,7 @@ public:
     RenderSystem(const RenderSystem&) = delete;
     RenderSystem& operator=(const RenderSystem&) = delete;
 
-    void renderObjects(VkCommandBuffer command_buffer, std::vector<Object>& objects);
+    void renderObjects(VkCommandBuffer command_buffer, std::vector<Object>& objects, const Camera& camera);
 
     std::string shaders_path = SHADERS_PATH; // defined at cmake configure time
 

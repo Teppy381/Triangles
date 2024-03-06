@@ -24,6 +24,12 @@ public:
     {
         return swap_chain->getRenderPass();
     }
+
+    float getAspectRatio() const
+    {
+        return swap_chain->extentAspectRatio();
+    }
+
     bool isFrameInProgress() const
     {
         return is_frame_started;
@@ -50,7 +56,6 @@ public:
 private:
     void createCommandBuffers();
     void freeCommandBuffers();
-    void drawFrame();
     void recreateSwapChain();
 
     Window& window;

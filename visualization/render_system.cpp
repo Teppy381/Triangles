@@ -66,7 +66,7 @@ void RenderSystem::createPipeline(VkRenderPass render_pass)
     );
 }
 
-void RenderSystem::renderObjects(VkCommandBuffer command_buffer, std::vector<Object>& objects)
+void RenderSystem::renderObjects(VkCommandBuffer command_buffer, std::vector<Object>& objects, const Camera& camera)
 {
     pipeline->bind(command_buffer);
 
@@ -77,7 +77,7 @@ void RenderSystem::renderObjects(VkCommandBuffer command_buffer, std::vector<Obj
         obj.transform.rotation.z = glm::mod(obj.transform.rotation.z + 0.0011f, glm::two_pi<float>());
 
         SimplePushConstantData push{};
-        push.transform = obj.transform.mat4();
+        push.transform = camera.getProjection() * obj.transform.mat4();
         push.color = obj.color;
 
         vkCmdPushConstants(
