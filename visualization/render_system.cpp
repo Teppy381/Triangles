@@ -15,9 +15,8 @@ namespace yLab
 
 struct SimplePushConstantData
 {
-    glm::mat2 transform{1.0f};
-    glm::vec2 offset;
-    alignas(16) glm::vec3 color;
+    glm::mat4 transform{1.0f};
+    glm::vec3 color;
 };
 
 RenderSystem::RenderSystem(Device& device_, VkRenderPass render_pass) : device{device_}
@@ -73,12 +72,13 @@ void RenderSystem::renderObjects(VkCommandBuffer command_buffer, std::vector<Obj
 
     for (auto&& obj : objects)
     {
-        obj.transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.01f, glm::two_pi<float>());
+        obj.transform.rotation.x = glm::mod(obj.transform.rotation.x + 0.0017f, glm::two_pi<float>());
+        obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + 0.0132f, glm::two_pi<float>());
+        obj.transform.rotation.z = glm::mod(obj.transform.rotation.z + 0.0011f, glm::two_pi<float>());
 
         SimplePushConstantData push{};
-        push.offset = obj.transform2d.translation;
+        push.transform = obj.transform.mat4();
         push.color = obj.color;
-        push.transform = obj.transform2d.mat2();
 
         vkCmdPushConstants(
             command_buffer,
