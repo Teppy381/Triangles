@@ -70,6 +70,8 @@ void RenderSystem::renderObjects(VkCommandBuffer command_buffer, std::vector<Obj
 {
     pipeline->bind(command_buffer);
 
+    auto projection_view = camera.getProjection() * camera.getView();
+
     for (auto&& obj : objects)
     {
         obj.transform.rotation.x = glm::mod(obj.transform.rotation.x + 0.0017f, glm::two_pi<float>());
@@ -77,7 +79,7 @@ void RenderSystem::renderObjects(VkCommandBuffer command_buffer, std::vector<Obj
         obj.transform.rotation.z = glm::mod(obj.transform.rotation.z + 0.0011f, glm::two_pi<float>());
 
         SimplePushConstantData push{};
-        push.transform = camera.getProjection() * obj.transform.mat4();
+        push.transform = projection_view * obj.transform.mat4();
         push.color = obj.color;
 
         vkCmdPushConstants(

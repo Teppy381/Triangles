@@ -24,7 +24,8 @@ void FirstApp::run()
 {
     RenderSystem render_system{device, renderer.getSwapChainRenderPass()};
     Camera camera{};
-
+    // camera.setViewDirection({0, 0, 0}, {0.5, 0.0, 1.0});
+    camera.setViewTarget({-1, -2, 2}, {0, 0, 0.5});
     while (!window.shouldClose())
     {
         glfwPollEvents();
@@ -114,7 +115,7 @@ void FirstApp::loadObjects()
 
     Object cube = Object::createObject();
     cube.model = model;
-    cube.transform.translation = {0.0f, 0.0f, 2.5f};
+    cube.transform.translation = {0.0f, 0.0f, 0.5f};
     cube.transform.scale = {0.5f, 0.5f, 0.5f};
     objects.push_back(std::move(cube));
 }
