@@ -3,6 +3,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <iostream>
 #include <string>
 #include <stdexcept>
 
@@ -21,6 +22,7 @@ public:
     )
         : width{w}, height{h}, window_name{name}
     {
+        glfwSetErrorCallback(errorCallback);
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
@@ -80,6 +82,11 @@ private:
         window->frame_buffer_resized = true;
         window->width = width;
         window->height = height;
+    }
+
+    static void errorCallback(int error, const char* description)
+    {
+        std::cout << error << ": " << description << std::endl;
     }
 
     int width;

@@ -67,5 +67,5 @@ add_executable(vulkan_triangles main.cpp device.cpp pipeline.cpp swap_chain.cpp 
 
 add_shaders(vulkan_triangles shaders/simple.frag shaders/simple.vert)
 
-target_include_directories(vulkan_triangles PUBLIC ${Vulkan_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(vulkan_triangles PUBLIC ${Vulkan_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(vulkan_triangles glm glfw ${Vulkan_LIBRARY})

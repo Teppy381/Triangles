@@ -89,6 +89,7 @@ void FirstApp::run()
         }
     }
 
+    std::cout << "Closing window..." << std::endl;
     vkDeviceWaitIdle(device.device());
 }
 
@@ -163,10 +164,15 @@ void FirstApp::loadObjects()
     cube1.transform.scale = {0.5f, 0.5f, 0.5f};
     objects.push_back(std::move(cube1));
 
+    float cube2_scale = 0.1f;
+    std::cout << "Enter cube2_scale: ";
+    std::cin >> cube2_scale;
+
     Object cube2 = Object::createObject();
     cube2.model = model;
     cube2.transform.translation = {0.0f, 0.0f, 0.0f};
-    cube2.transform.scale = {0.05f, 0.05f, 0.05f};
+    // cube2.transform.scale = {0.05f, 0.05f, 0.05f};
+    cube2.transform.scale = {cube2_scale, cube2_scale, cube2_scale};
     cube2.transform.rotation = {2.0f, 2.0f, 0.0f};
     objects.push_back(std::move(cube2));
 }
