@@ -23,13 +23,34 @@ FirstApp::FirstApp()
     loadObjects();
 }
 
+
+void FirstApp::keyCallback(GLFWwindow* window_, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window_, GLFW_TRUE);
+    }
+}
+
+
+void FirstApp::scrollCallback(GLFWwindow* window_, double x_offset, double y_offset)
+{
+    // somehow call moveTowardsTarget and moveAroundTarget
+
+    // code for fun:
+    auto window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window_));
+    auto [width, height] = window->getExtent();
+    glfwSetWindowSize(window_, width + x_offset * 20, height + y_offset * 20);
+}
+
+
 void FirstApp::run()
 {
     RenderSystem render_system{device, renderer.getSwapChainRenderPass()};
     Camera camera{};
 
     auto viewerObject = Object::createObject();
-    viewerObject.transform.translation = {0.2, 0.0, 0.0};
+    viewerObject.transform.translation = {1, -1, 0.0};
     KeyboardController camera_controller{};
 
     auto current_time = std::chrono::high_resolution_clock::now();

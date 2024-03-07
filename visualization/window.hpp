@@ -12,7 +12,14 @@ namespace yLab
 class Window
 {
 public:
-    Window(int w, int h, std::string name) : width{w}, height{h}, window_name{name}
+    Window(
+        int w,
+        int h,
+        std::string name,
+        GLFWkeyfun keyCallback = nullptr,
+        GLFWscrollfun scrollCallback = nullptr
+    )
+        : width{w}, height{h}, window_name{name}
     {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -21,6 +28,7 @@ public:
         glfwSetWindowUserPointer(window, this);
         glfwSetFramebufferSizeCallback(window, frameBufferResizeCallback);
         glfwSetKeyCallback(window, keyCallback);
+        glfwSetScrollCallback(window, scrollCallback);
     }
 
     ~Window()
@@ -72,14 +80,6 @@ private:
         window->frame_buffer_resized = true;
         window->width = width;
         window->height = height;
-    }
-
-    static void keyCallback(GLFWwindow* window_, int key, int scancode, int action, int mods)
-    {
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        {
-            glfwSetWindowShouldClose(window_, GLFW_TRUE);
-        }
     }
 
     int width;

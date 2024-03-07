@@ -29,7 +29,10 @@ public:
 private:
     void loadObjects();
 
-    Window window{WIDTH, HEIGHT, "Hello"};
+    static void keyCallback(GLFWwindow* window_, int key, int scancode, int action, int mods);
+    static void scrollCallback(GLFWwindow* window, double x_offset, double y_offset);
+
+    Window window{WIDTH, HEIGHT, "Hello", keyCallback, scrollCallback};
     Device device{window};
     Renderer renderer{window, device};
     std::vector<Object> objects;

@@ -76,7 +76,7 @@ void KeyboardController::moveTowardsTarget(GLFWwindow* window, float dt, Object&
 {
     glm::vec3 towards_dir = target - object.transform.translation;
 
-    std::cout << "distance to target: " << glm::length(towards_dir) << std::endl;
+    // std::cout << "distance to target: " << glm::length(towards_dir) << std::endl;
 
     if (glm::dot(towards_dir, towards_dir) < std::numeric_limits<float>::epsilon())
     {
@@ -153,7 +153,7 @@ void KeyboardController::moveAroundTarget(GLFWwindow* window, float dt, Object& 
     float vertical_angle = glm::asin(towards_dir.y / glm::length(towards_dir));
     float new_vertical_angle = vertical_angle + rotation_speed * dt * move_up;
 
-    std::cout << "vertical_angle = " << vertical_angle << std::endl;
+    // std::cout << "vertical_angle = " << vertical_angle << std::endl;
 
     if (!(new_vertical_angle > MAX_VERTICAL_ANGLE && move_up > 0
         || new_vertical_angle < MIN_VERTICAL_ANGLE && move_up < 0))
