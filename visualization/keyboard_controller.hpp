@@ -20,10 +20,11 @@ public:
         int lookRight = GLFW_KEY_RIGHT;
         int lookUp = GLFW_KEY_UP;
         int lookDown = GLFW_KEY_DOWN;
+        int accelerate = GLFW_KEY_LEFT_SHIFT;
     };
 
     KeyMappings keys{};
-    float move_speed = 3.0f;
+    float move_speed = 2.0f;
     float look_speed = 1.5f;
     float rotation_speed = 2.0f;
 

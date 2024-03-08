@@ -51,9 +51,6 @@ Pipeline::Pipeline(Device& device_, const std::string& vert_filepath,
     vertex_input_info.pVertexAttributeDescriptions = attribute_descriptions.data();
     vertex_input_info.pVertexBindingDescriptions = binding_descriptions.data();
 
-    // here was important stuff
-
-
     VkGraphicsPipelineCreateInfo pipeline_info{};
     pipeline_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipeline_info.stageCount = 2;

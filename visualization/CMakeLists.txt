@@ -61,6 +61,7 @@ function(add_shaders TARGET_NAME)
 endfunction()
 
 
+add_definitions("-O1")
 add_compile_definitions(SHADERS_PATH="${SHADERS_OUTPUT_PATH}/")
 
 add_executable(vulkan_triangles main.cpp device.cpp pipeline.cpp swap_chain.cpp first_app.cpp model.cpp renderer.cpp render_system.cpp camera.cpp keyboard_controller.cpp)

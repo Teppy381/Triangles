@@ -78,6 +78,12 @@ void KeyboardController::moveTowardsTarget(GLFWwindow* window, float dt, Object&
 
     // std::cout << "distance to target: " << glm::length(towards_dir) << std::endl;
 
+    float local_move_speed = move_speed;
+    if (glfwGetKey(window, keys.accelerate) == GLFW_PRESS)
+    {
+        local_move_speed *= 4;
+    }
+
     if (glm::dot(towards_dir, towards_dir) < std::numeric_limits<float>::epsilon())
     {
         towards_dir = {1.0f, 0.0f, 0.0f};
@@ -99,7 +105,7 @@ void KeyboardController::moveTowardsTarget(GLFWwindow* window, float dt, Object&
         return;
     }
 
-    object.transform.translation += (move_speed * dt * move_to) * glm::normalize(towards_dir);
+    object.transform.translation += (local_move_speed * dt * move_to) * glm::normalize(towards_dir);
 
 }
 
@@ -114,6 +120,12 @@ void KeyboardController::moveAroundTarget(GLFWwindow* window, float dt, Object& 
 
     int move_right = 0;
     int move_up = 0;
+
+    float local_rotation_speed = rotation_speed;
+    if (glfwGetKey(window, keys.accelerate) == GLFW_PRESS)
+    {
+        local_rotation_speed *= 2;
+    }
 
     if (glfwGetKey(window, keys.moveRight) == GLFW_PRESS)
     {
@@ -140,7 +152,7 @@ void KeyboardController::moveAroundTarget(GLFWwindow* window, float dt, Object& 
     // angle between X and projection of the towards_dir vector on the XZ plane
     float horizontal_length = glm::length(glm::vec3{towards_dir.x, 0, towards_dir.z});
     float horizontal_angle = glm::atan(towards_dir.x, towards_dir.z);
-    float new_horizontal_angle = horizontal_angle - rotation_speed * dt * move_right;
+    float new_horizontal_angle = horizontal_angle - local_rotation_speed * dt * move_right;
 
     // std::cout << "horizontal_angle = " << horizontal_angle << std::endl;
 
@@ -151,7 +163,7 @@ void KeyboardController::moveAroundTarget(GLFWwindow* window, float dt, Object& 
 
     // angle between the towards_dir vector and the XZ plane
     float vertical_angle = glm::asin(towards_dir.y / glm::length(towards_dir));
-    float new_vertical_angle = vertical_angle + rotation_speed * dt * move_up;
+    float new_vertical_angle = vertical_angle + local_rotation_speed * dt * move_up;
 
     // std::cout << "vertical_angle = " << vertical_angle << std::endl;
 

@@ -19,6 +19,7 @@ public:
     {
         glm::vec3 position;
         glm::vec3 color;
+        // glm::vec3 normal;
 
         static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
         static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();

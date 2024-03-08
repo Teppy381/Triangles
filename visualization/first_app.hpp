@@ -5,6 +5,8 @@
 #include "renderer.hpp"
 #include "object.hpp"
 
+#include "input.hpp"
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,7 +20,7 @@ public:
     static const int WIDTH = 1000;
     static const int HEIGHT = 800;
 
-    FirstApp();
+    FirstApp(std::vector<geometry::Boxed_triangle_t>& triangles_, std::vector<bool>& intersection_list_);
     ~FirstApp() = default;
 
     FirstApp(const FirstApp&) = delete;
@@ -32,7 +34,10 @@ private:
     static void keyCallback(GLFWwindow* window_, int key, int scancode, int action, int mods);
     static void scrollCallback(GLFWwindow* window, double x_offset, double y_offset);
 
-    Window window{WIDTH, HEIGHT, "Hello", keyCallback, scrollCallback};
+    std::vector<geometry::Boxed_triangle_t> triangles;
+    std::vector<bool> intersection_list;
+
+    Window window{WIDTH, HEIGHT, "Triangles", keyCallback, scrollCallback};
     Device device{window};
     Renderer renderer{window, device};
     std::vector<Object> objects;

@@ -26,6 +26,9 @@ public:
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
+        glfwWindowHint(GLFW_FOCUS_ON_SHOW, GLFW_TRUE);
+        glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
         window = glfwCreateWindow(w, h, window_name.c_str(), nullptr, nullptr);
         glfwSetWindowUserPointer(window, this);
         glfwSetFramebufferSizeCallback(window, frameBufferResizeCallback);

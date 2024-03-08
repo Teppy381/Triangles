@@ -18,11 +18,11 @@
 namespace yLab
 {
 
-FirstApp::FirstApp()
+FirstApp::FirstApp(std::vector<geometry::Boxed_triangle_t>& triangles_, std::vector<bool>& intersection_list_)
+    : triangles{triangles_}, intersection_list{intersection_list_}
 {
     loadObjects();
 }
-
 
 void FirstApp::keyCallback(GLFWwindow* window_, int key, int scancode, int action, int mods)
 {
@@ -32,17 +32,10 @@ void FirstApp::keyCallback(GLFWwindow* window_, int key, int scancode, int actio
     }
 }
 
-
 void FirstApp::scrollCallback(GLFWwindow* window_, double x_offset, double y_offset)
 {
     // somehow call moveTowardsTarget and moveAroundTarget
-
-    // code for fun:
-    auto window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window_));
-    auto [width, height] = window->getExtent();
-    glfwSetWindowSize(window_, width + x_offset * 20, height + y_offset * 20);
 }
-
 
 void FirstApp::run()
 {
@@ -55,12 +48,14 @@ void FirstApp::run()
 
     auto current_time = std::chrono::high_resolution_clock::now();
 
+    glfwShowWindow(window.getGLFWwindow());
     while (!window.shouldClose())
     {
         glfwPollEvents();
 
         auto new_time = std::chrono::high_resolution_clock::now();
-        float frame_time = std::chrono::duration<float, std::chrono::seconds::period>(new_time - current_time).count();
+        float frame_time
+            = std::chrono::duration<float, std::chrono::seconds::period>(new_time - current_time).count();
         current_time = new_time;
 
         const float MAX_FRAME_TIME = 0.1;
@@ -68,15 +63,14 @@ void FirstApp::run()
 
         // std::cout << "frame_time: " << frame_time << std::endl;
 
-        const glm::vec3 target = {0.0f, 0.0f, 0.5f};
+        const glm::vec3 target = {0.0f, 0.0f, 0.0f};
         camera_controller.moveTowardsTarget(window.getGLFWwindow(), frame_time, viewerObject, target);
         camera_controller.moveAroundTarget(window.getGLFWwindow(), frame_time, viewerObject, target);
 
         camera.setViewTarget(viewerObject.transform.translation, target);
 
-
         float aspect = renderer.getAspectRatio();
-        camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 10.0f);
+        camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 100.0f);
         auto command_buffer = renderer.beginFrame();
         if (command_buffer != nullptr)
         {
@@ -158,23 +152,49 @@ void FirstApp::loadObjects()
 {
     std::shared_ptr<Model> model = createCubeModel(device, {0.0f, 0.0f, 0.0f});
 
-    Object cube1 = Object::createObject();
-    cube1.model = model;
-    cube1.transform.translation = {0.0f, 0.0f, 0.5f};
-    cube1.transform.scale = {0.5f, 0.5f, 0.5f};
-    objects.push_back(std::move(cube1));
+    Object cube = Object::createObject();
+    cube.model = model;
+    cube.transform.translation = {0.0f, 0.0f, 0.0f};
+    cube.transform.scale = {0.01f, 0.01f, 0.01f};
+    cube.transform.rotation = {0.0f, 0.0f, 0.0f};
+    objects.push_back(std::move(cube));
 
-    float cube2_scale = 0.1f;
-    std::cout << "Enter cube2_scale: ";
-    std::cin >> cube2_scale;
 
-    Object cube2 = Object::createObject();
-    cube2.model = model;
-    cube2.transform.translation = {0.0f, 0.0f, 0.0f};
-    // cube2.transform.scale = {0.05f, 0.05f, 0.05f};
-    cube2.transform.scale = {cube2_scale, cube2_scale, cube2_scale};
-    cube2.transform.rotation = {2.0f, 2.0f, 0.0f};
-    objects.push_back(std::move(cube2));
+    const glm::vec3 red_color = {0.8f, 0.1f, 0.1f};
+    const glm::vec3 blue_color = {0.1f, 0.1f, 0.8f};
+
+    for (int i = 0; i < triangles.size(); ++i)
+    {
+        glm::vec3 color{};
+
+        if (intersection_list[i] == true)
+        {
+            color = red_color;
+        }
+        else
+        {
+            color = blue_color;
+        }
+
+        // geometry::Vector_t normal_ = triangles[i].get_normal();
+        // glm::vec3 normal = {normal_.y, normal_.z, normal_.x};
+
+        geometry::Point_t T1 = triangles[i].P;
+        geometry::Point_t T2 = triangles[i].e1 + triangles[i].P;
+        geometry::Point_t T3 = triangles[i].e2 + triangles[i].P;
+
+        std::vector<Model::Vertex> vertices{
+            {{-T1.z, T1.x, T1.y}, color},
+            {{-T2.z, T2.x, T2.y}, color},
+            {{-T3.z, T3.x, T3.y}, color}
+        };
+
+        Object triangle = Object::createObject();
+        triangle.model = std::make_unique<Model>(device, vertices);
+        triangle.transform.scale = {0.01f, 0.01f, 0.01f};
+        triangle.transform.rotation = {0.0f, 0.0f, 0.0f};
+        objects.push_back(std::move(triangle));
+    }
 }
 
 } // namespace yLab
