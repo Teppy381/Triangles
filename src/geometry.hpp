@@ -12,8 +12,7 @@ struct Point_t
 {
     float x = NAN, y = NAN, z = NAN;
 
-    //constructor
-    Point_t(float x_, float y_, float z_): x(x_), y(y_), z(z_)
+    Point_t(float x_, float y_, float z_) : x(x_), y(y_), z(z_)
     {}
 
     Point_t() = default;
@@ -37,17 +36,34 @@ struct Point_t
 };
 
 
-struct Vector_t : public Point_t
+struct Vector_t
 {
-    using Point_t::Point_t;
+    float x = NAN, y = NAN, z = NAN;
 
-    // vector from {0, 0, 0} to P
-    Vector_t(Point_t P) : Point_t(P.x, P.y, P.z)
+    Vector_t(float x_, float y_, float z_) : x(x_), y(y_), z(z_)
     {}
 
     // vector from P1 to P2
-    Vector_t(Point_t P1, Point_t P2) : Point_t{P2.x - P1.x, P2.y - P1.y, P2.z - P1.z}
+    Vector_t(Point_t P1, Point_t P2) : Vector_t{P2.x - P1.x, P2.y - P1.y, P2.z - P1.z}
     {}
+
+    bool is_valid() const
+    {
+        return !(std::isnan(x) || std::isnan(y) || std::isnan(z));
+    }
+
+    bool operator==(const Vector_t& rhs) const
+    {
+        assert((*this).is_valid() && rhs.is_valid());
+        return (equal(x, rhs.x) && equal(y, rhs.y) && equal(z, rhs.z));
+    }
+
+    void dump() const
+    {
+        assert((*this).is_valid());
+        std::cout << "(" << x << ", " << y << ", " << z << ")\n";
+    }
+
 
     float length() const
     {
@@ -82,6 +98,11 @@ struct Vector_t : public Point_t
 
 };
 
+static Point_t operator+(const Point_t& lhs, const Vector_t& rhs)
+{
+    return {lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z};
+}
+
 static bool is_zero(const Vector_t& vec)
 {
     return is_zero(vec.x) && is_zero(vec.y) && is_zero(vec.z);
@@ -111,32 +132,29 @@ static float triple_product(const Vector_t& vec1, const Vector_t& vec2, const Ve
 
 struct Triangle_t
 {
-    Point_t P;
-    Vector_t e1, e2; // vectors from P to two other points
+    Point_t P1, P2, P3;
 
-    Triangle_t(const Point_t& P1, const Point_t& P2, const Point_t& P3) : P{P1}
-    {
-        e1 = {P2.x - P1.x, P2.y - P1.y, P2.z - P1.z};
-        e2 = {P3.x - P1.x, P3.y - P1.y, P3.z - P1.z};
-    }
+    Triangle_t(const Point_t& P1_, const Point_t& P2_, const Point_t& P3_) : P1{P1_}, P2{P2_}, P3{P3_}
+    {}
 
     Vector_t get_normal() const
     {
+        Vector_t e1{P2.x - P1.x, P2.y - P1.y, P2.z - P1.z}, e2{P3.x - P1.x, P3.y - P1.y, P3.z - P1.z};
         return cross_product(e1, e2).normalize();
     }
 
     bool valid() const
     {
-        return (P.is_valid() && e1.is_valid() && e2.is_valid());
+        return (P1.is_valid() && P2.is_valid() && P3.is_valid());
     }
 
     void dump() const
     {
         std::cout << "Triangle:" << std::endl;
 
-        P.dump();
-        (e1 + P).dump();
-        (e2 + P).dump();
+        P1.dump();
+        P2.dump();
+        P3.dump();
     }
 };
 
@@ -171,14 +189,18 @@ static bool boxes_intersect(const Boxed_triangle_t& tr1, const Boxed_triangle_t&
 
 static bool triangle_point_coplanar_intersection(const Triangle_t& tr, const Point_t& A)
 {
-    Vector_t vec{tr.P, A};
+    Vector_t vec{tr.P1, A};
+
+    Vector_t e1{tr.P2.x - tr.P1.x, tr.P2.y - tr.P1.y, tr.P2.z - tr.P1.z};
+    Vector_t e2{tr.P3.x - tr.P1.x, tr.P3.y - tr.P1.y, tr.P3.z - tr.P1.z};
+
     // decomposition: vec == tr.e1 * t1 + tr.e2 * t2
-    float x1 = tr.e1.x,
-          y1 = tr.e1.y,
-          z1 = tr.e1.z,
-          x2 = tr.e2.x,
-          y2 = tr.e2.y,
-          z2 = tr.e2.z,
+    float x1 = e1.x,
+          y1 = e1.y,
+          z1 = e1.z,
+          x2 = e2.x,
+          y2 = e2.y,
+          z2 = e2.z,
           xA = vec.x,
           yA = vec.y,
           zA = vec.z;
@@ -281,38 +303,28 @@ static bool line_segment_line_segment_coplanar_intersection(const Point_t& A1, c
 
 static bool triangle_line_segment_coplanar_intersection(const Triangle_t& tr, const Point_t& P1, const Point_t& P2)
 {
-    Point_t T1 = tr.P;
-    Point_t T2 = tr.e1 + tr.P;
-    Point_t T3 = tr.e2 + tr.P;
-
-    return line_segment_line_segment_coplanar_intersection(P1, P2, T1, T2) ||
-           line_segment_line_segment_coplanar_intersection(P1, P2, T1, T3) ||
-           line_segment_line_segment_coplanar_intersection(P1, P2, T2, T3);
+    return line_segment_line_segment_coplanar_intersection(P1, P2, tr.P1, tr.P2) ||
+           line_segment_line_segment_coplanar_intersection(P1, P2, tr.P1, tr.P3) ||
+           line_segment_line_segment_coplanar_intersection(P1, P2, tr.P2, tr.P3);
 }
 
 static bool lookup_coplanar_intersection(const Triangle_t& tr1, const Triangle_t& tr2)
 {
-    Point_t T11 = tr1.P;
-    Point_t T12 = tr1.e1 + tr1.P;
-    Point_t T13 = tr1.e2 + tr1.P;
-    Point_t T21 = tr2.P;
-    Point_t T22 = tr2.e1 + tr2.P;
-    Point_t T23 = tr2.e2 + tr2.P;
-    return triangle_line_segment_coplanar_intersection(tr2, T11, T12) ||
-           triangle_line_segment_coplanar_intersection(tr2, T11, T13) ||
-           triangle_line_segment_coplanar_intersection(tr2, T12, T13) ||
-           triangle_line_segment_coplanar_intersection(tr1, T21, T22) ||
-           triangle_line_segment_coplanar_intersection(tr1, T21, T23) ||
-           triangle_line_segment_coplanar_intersection(tr1, T22, T23) ||
-           triangle_point_coplanar_intersection(tr1, T21) ||
-           triangle_point_coplanar_intersection(tr2, T11);
+    return triangle_line_segment_coplanar_intersection(tr2, tr1.P1, tr1.P2) ||
+           triangle_line_segment_coplanar_intersection(tr2, tr1.P1, tr1.P3) ||
+           triangle_line_segment_coplanar_intersection(tr2, tr1.P2, tr1.P3) ||
+           triangle_line_segment_coplanar_intersection(tr1, tr2.P1, tr2.P2) ||
+           triangle_line_segment_coplanar_intersection(tr1, tr2.P1, tr2.P3) ||
+           triangle_line_segment_coplanar_intersection(tr1, tr2.P2, tr2.P3) ||
+           triangle_point_coplanar_intersection(tr1, tr2.P1) ||
+           triangle_point_coplanar_intersection(tr2, tr1.P1);
 }
 
 static bool triangle_line_segment_intersection(const Triangle_t& tr, const Point_t P1, const Point_t P2)
 {
-    Vector_t L1{P1, tr.P};
-    Vector_t L2{P2, tr.P};
-    Vector_t normal = cross_product(tr.e1, tr.e2);
+    Vector_t L1{P1, tr.P1};
+    Vector_t L2{P2, tr.P1};
+    Vector_t normal = tr.get_normal();
 
     // different signs in L1*normal and L2*normal => P1 and P2 are in different half-spaces
     float dot1 = dot_product(L1, normal);
@@ -342,14 +354,14 @@ static bool triangle_line_segment_intersection(const Triangle_t& tr, const Point
     float dot = dot_product(normal, U);
     if (is_zero(dot)) {return false;} // parallel to triangle
 
-    Vector_t W{tr.P, P1};
+    Vector_t W{tr.P1, P1};
 
     float fac = -dot_product(normal, W) / dot;
     if (fac < 0 || fac > 1)
     {
         return false;
     }
-    Point_t point = Vector_t{P1} + (U * fac);
+    Point_t point = P1 + (U * fac);
 
     return triangle_point_coplanar_intersection(tr, point);
 }
@@ -358,12 +370,12 @@ static bool triangle_line_segment_intersection(const Triangle_t& tr, const Point
 static bool lookup_non_coplanar_intersection(const Triangle_t& tr1, const Triangle_t& tr2)
 {
     return
-    triangle_line_segment_intersection(tr1, tr2.P, (Vector_t) tr2.P + tr2.e1) ||
-    triangle_line_segment_intersection(tr1, tr2.P, (Vector_t) tr2.P + tr2.e2) ||
-    triangle_line_segment_intersection(tr1, (Vector_t) tr2.P + tr2.e1, (Vector_t) tr2.P + tr2.e2) ||
-    triangle_line_segment_intersection(tr2, tr1.P, (Vector_t) tr1.P + tr1.e1) ||
-    triangle_line_segment_intersection(tr2, tr1.P, (Vector_t) tr1.P + tr1.e2) ||
-    triangle_line_segment_intersection(tr2, (Vector_t) tr1.P + tr1.e1, (Vector_t) tr1.P + tr1.e2);
+    triangle_line_segment_intersection(tr1, tr2.P1, tr2.P2) ||
+    triangle_line_segment_intersection(tr1, tr2.P1, tr2.P3) ||
+    triangle_line_segment_intersection(tr1, tr2.P2, tr2.P3) ||
+    triangle_line_segment_intersection(tr2, tr1.P1, tr1.P2) ||
+    triangle_line_segment_intersection(tr2, tr1.P1, tr1.P3) ||
+    triangle_line_segment_intersection(tr2, tr1.P2, tr1.P3);
 }
 
 static bool lookup_intersection(const Boxed_triangle_t& tr1, const Boxed_triangle_t& tr2)
@@ -376,7 +388,7 @@ static bool lookup_intersection(const Boxed_triangle_t& tr1, const Boxed_triangl
         return false;
     }
 
-    Vector_t R = Vector_t{tr1.P, tr2.P}; // vector from tr1.P to tr2.P
+    Vector_t R = Vector_t{tr1.P1, tr2.P1}; // vector from tr1.P1 to tr2.P1
 
     Vector_t n1 = tr1.get_normal();
     if ((!n1.is_valid()) || is_zero(n1))

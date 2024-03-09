@@ -277,9 +277,9 @@ void FirstApp::loadObjects()
         // std::cout << "dot() = " << glm::dot(normal, glm::normalize(light_dir)) << std::endl;
 
 
-        geometry::Point_t T1 = triangles[i].P;
-        geometry::Point_t T2 = triangles[i].e1 + triangles[i].P;
-        geometry::Point_t T3 = triangles[i].e2 + triangles[i].P;
+        geometry::Point_t T1 = triangles[i].P1;
+        geometry::Point_t T2 = triangles[i].P2;
+        geometry::Point_t T3 = triangles[i].P3;
 
         // double vertices to show one side of triangle while the other is culled
         std::vector<Model::Vertex> vertices{
