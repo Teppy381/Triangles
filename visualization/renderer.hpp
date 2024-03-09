@@ -65,8 +65,8 @@ private:
     std::vector<VkCommandBuffer> command_buffers;
 
     uint32_t current_image_index;
-    int current_frame_index;
-    bool is_frame_started;
+    int current_frame_index = 0;
+    bool is_frame_started = false;
 };
 
 } // namespace yLab

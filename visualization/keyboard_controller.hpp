@@ -21,6 +21,8 @@ public:
         int lookUp = GLFW_KEY_UP;
         int lookDown = GLFW_KEY_DOWN;
         int accelerate = GLFW_KEY_LEFT_SHIFT;
+        int goHome = GLFW_KEY_BACKSPACE;
+        int swichCamMode = GLFW_KEY_TAB;
     };
 
     KeyMappings keys{};
@@ -32,6 +34,9 @@ public:
 
     void moveTowardsTarget(GLFWwindow* window, float dt, Object& object, glm::vec3 target);
     void moveAroundTarget(GLFWwindow* window, float dt, Object& object, glm::vec3 target);
+    // void swichCamMode(GLFWwindow* window, int& cam_mode);
+    void moveHome(GLFWwindow* window, Object& object, glm::vec3 home_position);
+
 };
 
 }

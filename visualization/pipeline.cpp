@@ -106,8 +106,10 @@ void Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& config_info)
     config_info.rasterization_info.depthClampEnable = VK_FALSE;
     config_info.rasterization_info.rasterizerDiscardEnable = VK_FALSE;
     config_info.rasterization_info.polygonMode = VK_POLYGON_MODE_FILL;
-    config_info.rasterization_info.lineWidth = 1.0f;
-    config_info.rasterization_info.cullMode = VK_CULL_MODE_NONE;
+    // config_info.rasterization_info.polygonMode = VK_POLYGON_MODE_LINE;
+    config_info.rasterization_info.lineWidth = 3.0f;
+    // config_info.rasterization_info.cullMode = VK_CULL_MODE_NONE;
+    config_info.rasterization_info.cullMode = VK_CULL_MODE_BACK_BIT;
     config_info.rasterization_info.frontFace = VK_FRONT_FACE_CLOCKWISE;
     config_info.rasterization_info.depthBiasEnable = VK_FALSE;
     config_info.rasterization_info.depthBiasConstantFactor = 0.0f;  // optional

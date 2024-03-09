@@ -14,6 +14,12 @@
 namespace yLab
 {
 
+enum CameraMods : int
+{
+    freeCam = 0,
+    aroundCam = 1
+};
+
 class FirstApp
 {
 public:
@@ -41,6 +47,10 @@ private:
     Device device{window};
     Renderer renderer{window, device};
     std::vector<Object> objects;
+
+    int camera_mod = aroundCam;
+
+    const glm::vec3 home_camera_position = {1.0f, -0.5f, 1.0f};
 };
 
 } // namespace yLab

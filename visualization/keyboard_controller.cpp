@@ -176,4 +176,27 @@ void KeyboardController::moveAroundTarget(GLFWwindow* window, float dt, Object& 
     object.transform.translation = target - new_towards_dir;
 }
 
+// void KeyboardController::swichCamMode(GLFWwindow* window, int& cam_mode)
+// {
+//     if (glfwGetKey(window, keys.swichCamMode) == GLFW_RELEASE)
+//     {
+//         if (cam_mode == 0)
+//         {
+//             cam_mode = 1;
+//         }
+//         else
+//         {
+//             cam_mode = 0;
+//         }
+//     }
+// }
+
+void KeyboardController::moveHome(GLFWwindow* window, Object& object, glm::vec3 home_position)
+{
+    if (glfwGetKey(window, keys.goHome) == GLFW_PRESS)
+    {
+        object.transform.translation = home_position;
+    }
+}
+
 } // namespace yLab

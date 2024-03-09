@@ -42,8 +42,8 @@ void FirstApp::run()
     RenderSystem render_system{device, renderer.getSwapChainRenderPass()};
     Camera camera{};
 
-    auto viewerObject = Object::createObject();
-    viewerObject.transform.translation = {1, -1, 0.0};
+    auto viewer_object = Object::createObject();
+    viewer_object.transform.translation = home_camera_position;
     KeyboardController camera_controller{};
 
     auto current_time = std::chrono::high_resolution_clock::now();
@@ -60,14 +60,25 @@ void FirstApp::run()
 
         const float MAX_FRAME_TIME = 0.1;
         frame_time = glm::min(frame_time, MAX_FRAME_TIME);
-
         // std::cout << "frame_time: " << frame_time << std::endl;
 
-        const glm::vec3 target = {0.0f, 0.0f, 0.0f};
-        camera_controller.moveTowardsTarget(window.getGLFWwindow(), frame_time, viewerObject, target);
-        camera_controller.moveAroundTarget(window.getGLFWwindow(), frame_time, viewerObject, target);
 
-        camera.setViewTarget(viewerObject.transform.translation, target);
+
+        // camera_controller.swichCamMode(window.getGLFWwindow(), camera_mod);
+        camera_controller.moveHome(window.getGLFWwindow(), viewer_object, home_camera_position);
+
+        if (camera_mod == aroundCam)
+        {
+            const glm::vec3 target = {0.0f, 0.0f, 0.0f};
+            camera_controller.moveTowardsTarget(window.getGLFWwindow(), frame_time, viewer_object, target);
+            camera_controller.moveAroundTarget(window.getGLFWwindow(), frame_time, viewer_object, target);
+            camera.setViewTarget(viewer_object.transform.translation, target);
+        }
+        if (camera_mod == freeCam)
+        {
+            camera_controller.moveInPlaneXZ(window.getGLFWwindow(), frame_time, viewer_object);
+            camera.setViewYXZ(viewer_object.transform.translation, viewer_object.transform.rotation);
+        }
 
         float aspect = renderer.getAspectRatio();
         camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 100.0f);
@@ -87,86 +98,168 @@ void FirstApp::run()
     vkDeviceWaitIdle(device.device());
 }
 
-// temporary helper function, creates a 1x1x1 cube centered at offset
-std::unique_ptr<Model> createCubeModel(Device& device, glm::vec3 offset)
+
+const glm::vec3 red_color    = {0.8f, 0.1f, 0.1f};
+const glm::vec3 green_color  = {0.1f, 0.8f, 0.1f};
+const glm::vec3 blue_color   = {0.1f, 0.1f, 0.8f};
+const glm::vec3 white_color  = {0.9f, 0.9f, 0.9f};
+
+const glm::vec3 light_red_color    = {0.9f, 0.5f, 0.5f};
+const glm::vec3 light_green_color  = {0.5f, 0.9f, 0.5f};
+const glm::vec3 light_blue_color   = {0.5f, 0.5f, 0.9f};
+
+const glm::vec3 x_axis = {1.0f, 0.0f, 0.0f};
+const glm::vec3 y_axis = {0.0f, 0.0f, 1.0f};
+const glm::vec3 z_axis = {0.0f, -1.0f, 0.0f};
+
+// helper function, creates a 1x1x1 cube centered at offset
+std::unique_ptr<Model> createCubeModel(Device& device)
 {
     std::vector<Model::Vertex> vertices{
 
-        // left face (white)
-        {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
-        {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
-        {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
-        {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
-        {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
-        {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+        // right face {0.5, ..., ...}
+        {{.5f, -.5f, -.5f}, red_color, x_axis},
+        {{.5f, -.5f, .5f}, red_color, x_axis},
+        {{.5f, .5f, .5f}, red_color, x_axis},
+        {{.5f, .5f, -.5f}, red_color, x_axis},
+        {{.5f, -.5f, -.5f}, red_color, x_axis},
+        {{.5f, .5f, .5f}, red_color, x_axis},
 
-        // right face (yellow)
-        {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
-        {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
-        {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
-        {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
-        {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
-        {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+        // left face {-0.5, ..., ...}
+        {{-.5f, -.5f, -.5f}, light_red_color, -x_axis},
+        {{-.5f, .5f, .5f}, light_red_color, -x_axis},
+        {{-.5f, -.5f, .5f}, light_red_color, -x_axis},
+        {{-.5f, -.5f, -.5f}, light_red_color, -x_axis},
+        {{-.5f, .5f, -.5f}, light_red_color, -x_axis},
+        {{-.5f, .5f, .5f}, light_red_color, -x_axis},
 
-        // top face (orange, remember y axis points down)
-        {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-        {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-        {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-        {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-        {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-        {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+        // nose face {..., ..., 0.5}
+        {{-.5f, -.5f, .5f}, green_color, y_axis},
+        {{-.5f, .5f, .5f}, green_color, y_axis},
+        {{.5f, .5f, .5f}, green_color, y_axis},
+        {{.5f, -.5f, .5f}, green_color, y_axis},
+        {{-.5f, -.5f, .5f}, green_color, y_axis},
+        {{.5f, .5f, .5f}, green_color, y_axis},
 
-        // bottom face (red)
-        {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-        {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
-        {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
-        {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-        {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-        {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+        // tail face {..., ..., -0.5}
+        {{-.5f, -.5f, -.5f}, light_green_color, -y_axis},
+        {{.5f, .5f, -.5f}, light_green_color, -y_axis},
+        {{-.5f, .5f, -.5f}, light_green_color, -y_axis},
+        {{-.5f, -.5f, -.5f}, light_green_color, -y_axis},
+        {{.5f, -.5f, -.5f}, light_green_color, -y_axis},
+        {{.5f, .5f, -.5f}, light_green_color, -y_axis},
 
-        // nose face (blue)
-        {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-        {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-        {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-        {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-        {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-        {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+        // top face (y axis points down) {..., -0.5, ...}
+        {{-.5f, -.5f, -.5f}, blue_color, z_axis},
+        {{-.5f, -.5f, .5f}, blue_color, z_axis},
+        {{.5f, -.5f, .5f}, blue_color, z_axis},
+        {{.5f, -.5f, -.5f}, blue_color, z_axis},
+        {{-.5f, -.5f, -.5f}, blue_color, z_axis},
+        {{.5f, -.5f, .5f}, blue_color, z_axis},
 
-        // tail face (green)
-        {{-.5f, -.5f, -.5f}, {.1f, .8f, .1f}},
-        {{.5f, .5f, -.5f}, {.1f, .8f, .1f}},
-        {{-.5f, .5f, -.5f}, {.1f, .8f, .1f}},
-        {{-.5f, -.5f, -.5f}, {.1f, .8f, .1f}},
-        {{.5f, -.5f, -.5f}, {.1f, .8f, .1f}},
-        {{.5f, .5f, -.5f}, {.1f, .8f, .1f}},
-
+        // bottom face {..., 0.5, ...}
+        {{-.5f, .5f, -.5f}, light_blue_color, -z_axis},
+        {{.5f, .5f, .5f}, light_blue_color, -z_axis},
+        {{-.5f, .5f, .5f}, light_blue_color, -z_axis},
+        {{-.5f, .5f, -.5f}, light_blue_color, -z_axis},
+        {{.5f, .5f, -.5f}, light_blue_color, -z_axis},
+        {{.5f, .5f, .5f}, light_blue_color, -z_axis},
     };
-    for (auto& v : vertices)
-    {
-        v.position += offset;
-    }
+    return std::make_unique<Model>(device, vertices);
+}
+
+std::unique_ptr<Model> createCubeModel(Device& device, glm::vec3 color)
+{
+    std::vector<Model::Vertex> vertices{
+
+        // right face {0.5, ..., ...}
+        {{.5f, -.5f, -.5f}, color, x_axis},
+        {{.5f, -.5f, .5f}, color, x_axis},
+        {{.5f, .5f, .5f}, color, x_axis},
+        {{.5f, .5f, -.5f}, color, x_axis},
+        {{.5f, -.5f, -.5f}, color, x_axis},
+        {{.5f, .5f, .5f}, color, x_axis},
+
+        // left face {-0.5, ..., ...}
+        {{-.5f, -.5f, -.5f}, color, -x_axis},
+        {{-.5f, .5f, .5f}, color, -x_axis},
+        {{-.5f, -.5f, .5f}, color, -x_axis},
+        {{-.5f, -.5f, -.5f}, color, -x_axis},
+        {{-.5f, .5f, -.5f}, color, -x_axis},
+        {{-.5f, .5f, .5f}, color, -x_axis},
+
+        // nose face {..., ..., 0.5}
+        {{-.5f, -.5f, .5f}, color, y_axis},
+        {{-.5f, .5f, .5f}, color, y_axis},
+        {{.5f, .5f, .5f}, color, y_axis},
+        {{.5f, -.5f, .5f}, color, y_axis},
+        {{-.5f, -.5f, .5f}, color, y_axis},
+        {{.5f, .5f, .5f}, color, y_axis},
+
+        // tail face {..., ..., -0.5}
+        {{-.5f, -.5f, -.5f}, color, -y_axis},
+        {{.5f, .5f, -.5f}, color, -y_axis},
+        {{-.5f, .5f, -.5f}, color, -y_axis},
+        {{-.5f, -.5f, -.5f}, color, -y_axis},
+        {{.5f, -.5f, -.5f}, color, -y_axis},
+        {{.5f, .5f, -.5f}, color, -y_axis},
+
+        // top face (y axis points down) {..., -0.5, ...}
+        {{-.5f, -.5f, -.5f}, color, z_axis},
+        {{-.5f, -.5f, .5f}, color, z_axis},
+        {{.5f, -.5f, .5f}, color, z_axis},
+        {{.5f, -.5f, -.5f}, color, z_axis},
+        {{-.5f, -.5f, -.5f}, color, z_axis},
+        {{.5f, -.5f, .5f}, color, z_axis},
+
+        // bottom face {..., 0.5, ...}
+        {{-.5f, .5f, -.5f}, color, -z_axis},
+        {{.5f, .5f, .5f}, color, -z_axis},
+        {{-.5f, .5f, .5f}, color, -z_axis},
+        {{-.5f, .5f, -.5f}, color, -z_axis},
+        {{.5f, .5f, -.5f}, color, -z_axis},
+        {{.5f, .5f, .5f}, color, -z_axis},
+    };
     return std::make_unique<Model>(device, vertices);
 }
 
 void FirstApp::loadObjects()
 {
-    std::shared_ptr<Model> model = createCubeModel(device, {0.0f, 0.0f, 0.0f});
+    Object cube0 = Object::createObject();
+    cube0.model = createCubeModel(device);
+    cube0.transform.translation = {0.0f, 0.0f, 0.0f};
+    cube0.transform.scale = {0.02f, 0.02f, 0.02f};
+    cube0.transform.rotation = {0.0f, 0.0f, 0.0f};
+    objects.push_back(std::move(cube0));
 
-    Object cube = Object::createObject();
-    cube.model = model;
-    cube.transform.translation = {0.0f, 0.0f, 0.0f};
-    cube.transform.scale = {0.01f, 0.01f, 0.01f};
-    cube.transform.rotation = {0.0f, 0.0f, 0.0f};
-    objects.push_back(std::move(cube));
+    Object cube_x = Object::createObject();
+    cube_x.model = createCubeModel(device, red_color);
+    cube_x.transform.translation = {0.1f, 0.0f, 0.0f};
+    cube_x.transform.scale = {0.01f, 0.01f, 0.01f};
+    cube_x.transform.rotation = {0.0f, 0.0f, 0.0f};
+    objects.push_back(std::move(cube_x));
 
+    Object cube_y = Object::createObject();
+    cube_y.model = createCubeModel(device, green_color);
+    cube_y.transform.translation = {0.0f, 0.0f, 0.1f};
+    cube_y.transform.scale = {0.01f, 0.01f, 0.01f};
+    cube_y.transform.rotation = {0.0f, 0.0f, 0.0f};
+    objects.push_back(std::move(cube_y));
 
-    const glm::vec3 red_color = {0.8f, 0.1f, 0.1f};
-    const glm::vec3 blue_color = {0.1f, 0.1f, 0.8f};
+    Object cube_z = Object::createObject();
+    cube_z.model = createCubeModel(device, blue_color);
+    cube_z.transform.translation = {0.0f, -0.1f, 0.0f};
+    cube_z.transform.scale = {0.01f, 0.01f, 0.01f};
+    cube_z.transform.rotation = {0.0f, 0.0f, 0.0f};
+    objects.push_back(std::move(cube_z));
+
+    // std::vector<glm::vec3> color_palette{red_color, green_color, blue_color, white_color};
 
     for (int i = 0; i < triangles.size(); ++i)
     {
         glm::vec3 color{};
 
+        // color = color_palette[i % color_palette.size()];
         if (intersection_list[i] == true)
         {
             color = red_color;
@@ -176,17 +269,26 @@ void FirstApp::loadObjects()
             color = blue_color;
         }
 
-        // geometry::Vector_t normal_ = triangles[i].get_normal();
-        // glm::vec3 normal = {normal_.y, normal_.z, normal_.x};
+        geometry::Vector_t normal_ = triangles[i].get_normal();
+        glm::vec3 normal = {normal_.x, -normal_.z, normal_.y};
+
+        // glm::vec3 light_dir = {1.0f, -3.0f, 1.0f};
+        // std::cout << "normal: (" << normal.x << ", " << normal.y << ", " << normal.z <<  ")" << std::endl;
+        // std::cout << "dot() = " << glm::dot(normal, glm::normalize(light_dir)) << std::endl;
+
 
         geometry::Point_t T1 = triangles[i].P;
         geometry::Point_t T2 = triangles[i].e1 + triangles[i].P;
         geometry::Point_t T3 = triangles[i].e2 + triangles[i].P;
 
+        // double vertices to show one side of triangle while the other is culled
         std::vector<Model::Vertex> vertices{
-            {{-T1.z, T1.x, T1.y}, color},
-            {{-T2.z, T2.x, T2.y}, color},
-            {{-T3.z, T3.x, T3.y}, color}
+            {{T1.x, -T1.z, T1.y}, color, -normal},
+            {{T2.x, -T2.z, T2.y}, color, -normal},
+            {{T3.x, -T3.z, T3.y}, color, -normal},
+            {{T2.x, -T2.z, T2.y}, color, normal},
+            {{T1.x, -T1.z, T1.y}, color, normal},
+            {{T3.x, -T3.z, T3.y}, color, normal}
         };
 
         Object triangle = Object::createObject();
