@@ -255,6 +255,21 @@ void FirstApp::loadObjects()
 
     // std::vector<glm::vec3> color_palette{red_color, green_color, blue_color, white_color};
 
+
+    float triangle_scale_factor = 0;
+    if (triangles.size() != 0)
+    {
+        glm::vec3 sum = {0, 0, 0};
+        for (auto&& tr : triangles)
+        {
+            sum = {sum.x + tr.P_max.x, sum.y + tr.P_max.y, sum.z + tr.P_max.z};
+        }
+
+        glm::vec3 V = {triangles.size()/(5* sqrt(glm::dot(sum, sum))), 0.002f, 0.0f};
+        triangle_scale_factor = sqrt(glm::dot(V, V));
+        std::cout << "Triangles scale = " << triangle_scale_factor << std::endl;
+    }
+
     for (int i = 0; i < triangles.size(); ++i)
     {
         glm::vec3 color{};
@@ -293,7 +308,7 @@ void FirstApp::loadObjects()
 
         Object triangle = Object::createObject();
         triangle.model = std::make_unique<Model>(device, vertices);
-        triangle.transform.scale = {0.01f, 0.01f, 0.01f};
+        triangle.transform.scale = {triangle_scale_factor, triangle_scale_factor, triangle_scale_factor};
         triangle.transform.rotation = {0.0f, 0.0f, 0.0f};
         objects.push_back(std::move(triangle));
     }

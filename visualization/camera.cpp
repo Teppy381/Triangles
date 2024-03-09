@@ -32,7 +32,7 @@ void Camera::setPerspectiveProjection(float fov_y, float aspect, float near, flo
 
 void Camera::setViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up)
 {
-    assert(up.length() > std::numeric_limits<float>::epsilon());
+    assert(glm::dot(up, up) > std::numeric_limits<float>::epsilon());
     const glm::vec3 w = glm::normalize(direction);
     const glm::vec3 u = glm::normalize(glm::cross(w, up));
     const glm::vec3 v = glm::cross(w, u);
@@ -54,7 +54,7 @@ void Camera::setViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3
 
 void Camera::setViewTarget(glm::vec3 position, glm::vec3 target, glm::vec3 up)
 {
-    assert(up.length() > std::numeric_limits<float>::epsilon());
+    assert(glm::dot(up, up) > std::numeric_limits<float>::epsilon());
     setViewDirection(position, target - position, up);
 }
 
