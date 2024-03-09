@@ -79,12 +79,16 @@ You will need to install [Vulkan SDK](https://vulkan.lunarg.com/)
     Move Forward = `W`\
     Move Backward = `S`\
     Move Up = `SPACE`\
-    Move Down = `LEFT_ALT`\
-    (free spinning camera works only in freeCam mode)\
+    Move Down = `LEFT_ALT`
+
+    (Free spinning camera works only in freeCam mode)\
     Look Left = `LEFT`\
     Look Right = `RIGHT`\
-    Look Up = UP\
-    Look Down = `DOWN`\
+    Look Up = `UP`\
+    Look Down = `DOWN`
+
     Accelerate = `LEFT_SHIFT`\
-    Go Home = `BACKSPACE`\
+    Go Home = `BACKSPACE`
+
+    (Doesn't work yet)\
     Switch Camera Mode = `TAB`
