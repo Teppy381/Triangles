@@ -1,5 +1,7 @@
 include(FetchContent)
 
+set(FETCHCONTENT_TRY_FIND_PACKAGE_MODE ALWAYS)
+
 message(STATUS "Fetching glm...")
 FetchContent_Declare(
 	glm
@@ -14,13 +16,21 @@ FetchContent_Declare(
 	GIT_TAG 	e2c92645460f680fd272fd2eed591efb2be7dc31 #refs/tags/3.3.9
 )
 
+message(STATUS "Fetching VulkanMemoryAllocator...")
+FetchContent_Declare(
+	VulkanMemoryAllocator
+	GIT_REPOSITORY	https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+	GIT_TAG 	a6bfc237255a6bac1513f7c1ebde6d8aed6b5191 #refs/tags/3.0.1
+
+)
+
 set(GLFW_BUILD_EXAMPLES OFF)
 set(GLFW_TESTS OFF)
 set(GLFW_BUILD_DOCS OFF)
 
-FetchContent_MakeAvailable(glm glfw)
-find_package(Vulkan REQUIRED)
+FetchContent_MakeAvailable(glm glfw VulkanMemoryAllocator)
 
+find_package(Vulkan REQUIRED)
 message(STATUS "Vulkan_INCLUDE_DIR = ${Vulkan_INCLUDE_DIR}")
 message(STATUS "Vulkan_LIBRARY = ${Vulkan_LIBRARY}")
 
@@ -69,4 +79,4 @@ add_executable(vulkan_triangles main.cpp device.cpp pipeline.cpp swap_chain.cpp 
 add_shaders(vulkan_triangles shaders/simple.frag shaders/simple.vert)
 
 target_include_directories(vulkan_triangles PUBLIC ${Vulkan_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(vulkan_triangles glm glfw ${Vulkan_LIBRARY})
+target_link_libraries(vulkan_triangles glm glfw VulkanMemoryAllocator ${Vulkan_LIBRARY})

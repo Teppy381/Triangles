@@ -4,6 +4,9 @@
 #include "camera.hpp"
 #include "keyboard_controller.hpp"
 
+// #define VMA_IMPLEMENTATION
+// #include "vk_mem_alloc.h"
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
@@ -270,6 +273,8 @@ void FirstApp::loadObjects()
         std::cout << "Triangles scale = " << triangle_scale_factor << std::endl;
     }
 
+    std::vector<Model::Vertex> all_triangles_vertices{};
+    all_triangles_vertices.reserve(triangles.size() * 6);
     for (int i = 0; i < triangles.size(); ++i)
     {
         glm::vec3 color{};
@@ -291,26 +296,33 @@ void FirstApp::loadObjects()
         // std::cout << "normal: (" << normal.x << ", " << normal.y << ", " << normal.z <<  ")" << std::endl;
         // std::cout << "dot() = " << glm::dot(normal, glm::normalize(light_dir)) << std::endl;
 
-
         geometry::Point_t T1 = triangles[i].P1;
         geometry::Point_t T2 = triangles[i].P2;
         geometry::Point_t T3 = triangles[i].P3;
 
         // double vertices to show one side of triangle while the other is culled
-        std::vector<Model::Vertex> vertices{
-            {{T1.x, -T1.z, T1.y}, color, -normal},
-            {{T2.x, -T2.z, T2.y}, color, -normal},
-            {{T3.x, -T3.z, T3.y}, color, -normal},
-            {{T2.x, -T2.z, T2.y}, color, normal},
-            {{T1.x, -T1.z, T1.y}, color, normal},
-            {{T3.x, -T3.z, T3.y}, color, normal}
-        };
+        all_triangles_vertices.push_back({{T1.x, -T1.z, T1.y}, color, -normal});
+        all_triangles_vertices.push_back({{T2.x, -T2.z, T2.y}, color, -normal});
+        all_triangles_vertices.push_back({{T3.x, -T3.z, T3.y}, color, -normal});
+        all_triangles_vertices.push_back({{T2.x, -T2.z, T2.y}, color, normal});
+        all_triangles_vertices.push_back({{T1.x, -T1.z, T1.y}, color, normal});
+        all_triangles_vertices.push_back({{T3.x, -T3.z, T3.y}, color, normal});
+    }
 
-        Object triangle = Object::createObject();
-        triangle.model = std::make_unique<Model>(device, vertices);
-        triangle.transform.scale = {triangle_scale_factor, triangle_scale_factor, triangle_scale_factor};
-        triangle.transform.rotation = {0.0f, 0.0f, 0.0f};
-        objects.push_back(std::move(triangle));
+    if (all_triangles_vertices.size() != 0)
+    {
+        // for (auto&& v : all_triangles_vertices)
+        // {
+        //     std::cout << "position: (" << v.position.x << ", " << v.position.y << ", " << v.position.z << ")"<< std::endl;
+        //     std::cout << "color: (" << v.color.x << ", " << v.color.y << ", " << v.color.z << ")"<< std::endl;
+        //     std::cout << "normal: (" << v.normal.x << ", " << v.normal.y << ", " << v.normal.z << ")"<< std::endl;
+        // }
+
+        Object all_triangles = Object::createObject();
+        all_triangles.model = std::make_unique<Model>(device, all_triangles_vertices);
+        all_triangles.transform.scale = {triangle_scale_factor, triangle_scale_factor, triangle_scale_factor};
+        all_triangles.transform.rotation = {0.0f, 0.0f, 0.0f};
+        objects.push_back(std::move(all_triangles));
     }
 }
 
