@@ -164,7 +164,7 @@ TEST(Triangles, Simple_Intersection20)
 }
 
 
-const std::string filepath = "..\\..\\tests\\E2E tests\\";
+const std::string filepath = "../../tests/E2E_tests/";
 
 void test_file(std::string filename)
 {
@@ -247,4 +247,9 @@ TEST(Triangles, E2E_9)
 TEST(Triangles, E2E_10)
 {
     test_file("10.txt");
+}
+
+TEST(Triangles, E2E_flower)
+{
+    test_file("flower.txt");
 }

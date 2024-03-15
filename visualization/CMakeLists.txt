@@ -21,7 +21,6 @@ FetchContent_Declare(
 	VulkanMemoryAllocator
 	GIT_REPOSITORY	https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
 	GIT_TAG 	a6bfc237255a6bac1513f7c1ebde6d8aed6b5191 #refs/tags/3.0.1
-
 )
 
 set(GLFW_BUILD_EXAMPLES OFF)
@@ -74,7 +73,18 @@ endfunction()
 add_definitions("-O1")
 add_compile_definitions(SHADERS_PATH="${SHADERS_OUTPUT_PATH}/")
 
-add_executable(vulkan_triangles main.cpp device.cpp pipeline.cpp swap_chain.cpp first_app.cpp model.cpp renderer.cpp render_system.cpp camera.cpp keyboard_controller.cpp)
+add_executable(vulkan_triangles
+	main.cpp
+	device.cpp
+	pipeline.cpp
+	swap_chain.cpp
+	first_app.cpp
+	model.cpp
+	renderer.cpp
+	render_system.cpp
+	camera.cpp
+	camera_controller.cpp
+)
 
 add_shaders(vulkan_triangles shaders/simple.frag shaders/simple.vert)
 

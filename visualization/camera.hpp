@@ -11,12 +11,9 @@ class Camera
 {
 public:
     void setOrthographicProjection(float left, float right, float top, float bottom, float near, float far);
-
     void setPerspectiveProjection(float fov_y, float aspect, float near, float far);
 
-    void setViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up = {0.0f, -1.0f, 0.0f});
-    void setViewTarget(glm::vec3 position, glm::vec3 target, glm::vec3 up = {0.0f, -1.0f, 0.0f});
-    void setViewYXZ(glm::vec3 position, glm::vec3 rotation);
+    void setViewMatrix(glm::vec3 position, glm::vec3 u, glm::vec3 v, glm::vec3 w);
 
     const glm::mat4& getProjection() const
     {

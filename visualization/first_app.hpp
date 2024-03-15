@@ -16,8 +16,8 @@ namespace yLab
 
 enum CameraMods : int
 {
-    freeCam = 0,
-    aroundCam = 1
+    aroundCam = 0,
+    freeCam = 1
 };
 
 class FirstApp
@@ -36,6 +36,7 @@ public:
 
 private:
     void loadObjects();
+    void loadTestObjects();
 
     static void keyCallback(GLFWwindow* window_, int key, int scancode, int action, int mods);
     static void scrollCallback(GLFWwindow* window, double x_offset, double y_offset);
@@ -48,7 +49,7 @@ private:
     Renderer renderer{window, device};
     std::vector<Object> objects;
 
-    int camera_mod = aroundCam;
+    const std::vector<int> camera_modes = {aroundCam, freeCam};
 
     const glm::vec3 home_camera_position = {1.0f, -0.5f, 1.0f};
 };

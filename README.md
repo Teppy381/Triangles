@@ -62,16 +62,15 @@ You will need to install [Vulkan SDK](https://vulkan.lunarg.com/)
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-* Launch in from console
+* Launch from console
    ```sh
    build/visualization/vulkan_triangles.exe
    ```
 
 * For a showcase you can use files used in tests to not type triangles manually
    ```sh
-   build/visualization/vulkan_triangles.exe < "tests/E2E tests/$N.txt"
+   build/visualization/vulkan_triangles.exe < "tests/E2E_tests/flower.txt"
    ```
-   Where $N is any number from 1 to 10
 
 * Controls:\
     Move Left = `A`\
@@ -81,7 +80,7 @@ You will need to install [Vulkan SDK](https://vulkan.lunarg.com/)
     Move Up = `SPACE`\
     Move Down = `LEFT_ALT`
 
-    (Free spinning camera works only in freeCam mode)\
+    (Free rotating camera works only in freeCam mode)\
     Look Left = `LEFT`\
     Look Right = `RIGHT`\
     Look Up = `UP`\
@@ -90,5 +89,4 @@ You will need to install [Vulkan SDK](https://vulkan.lunarg.com/)
     Accelerate = `LEFT_SHIFT`\
     Go Home = `BACKSPACE`
 
-    (Doesn't work yet)\
-    Switch Camera Mode = `TAB`
+    Switch Camera Mode = `1`, `2`
