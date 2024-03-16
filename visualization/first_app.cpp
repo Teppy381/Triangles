@@ -104,9 +104,9 @@ void FirstApp::run()
     vkDeviceWaitIdle(device.device());
 }
 
-const glm::vec3 red_color = {0.8f, 0.1f, 0.1f};
-const glm::vec3 green_color = {0.1f, 0.8f, 0.1f};
-const glm::vec3 blue_color = {0.1f, 0.1f, 0.8f};
+const glm::vec3 red_color = {0.9f, 0.05f, 0.08f};
+const glm::vec3 green_color = {0.08f, 0.9f, 0.08f};
+const glm::vec3 blue_color = {0.08f, 0.08f, 0.9f};
 const glm::vec3 white_color = {0.9f, 0.9f, 0.9f};
 
 const glm::vec3 light_red_color = {0.9f, 0.5f, 0.5f};
