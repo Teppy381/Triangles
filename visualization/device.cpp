@@ -504,7 +504,7 @@ void Device::createBuffer(
 
   if (vkCreateBuffer(device_, &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
   {
-    throw std::runtime_error("failed to create vertex buffer!");
+    throw std::runtime_error("failed to create buffer!");
   }
 
   VkMemoryRequirements memRequirements;
@@ -517,7 +517,7 @@ void Device::createBuffer(
 
   if (vkAllocateMemory(device_, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
   {
-    throw std::runtime_error("failed to allocate vertex buffer memory!");
+    throw std::runtime_error("failed to allocate buffer memory!");
   }
 
   vkBindBufferMemory(device_, buffer, bufferMemory, 0);

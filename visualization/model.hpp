@@ -36,6 +36,7 @@ public:
 
 private:
     void createVertexBuffers(const std::vector<Vertex>& vertices);
+    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
     Device& device;
     VkBuffer vertex_buffer;
