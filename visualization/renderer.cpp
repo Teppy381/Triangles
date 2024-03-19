@@ -36,7 +36,7 @@ void Renderer::recreateSwapChain()
     }
     else
     {
-        std::shared_ptr<SwapChain> old_swap_chain = std::move(swap_chain);
+        std::unique_ptr<SwapChain> old_swap_chain = std::move(swap_chain);
         swap_chain = std::make_unique<SwapChain>(device, extent, old_swap_chain);
 
         if (!old_swap_chain->compareSwapFormats(*swap_chain.get()))

@@ -13,7 +13,7 @@ namespace yLab
 
 SwapChain::SwapChain(Device& deviceRef, VkExtent2D extent) : device{deviceRef}, windowExtent{extent}
 {
-    createSwapChain();
+    createSwapChain(nullptr);
     createImageViews();
     createRenderPass();
     createDepthResources();
@@ -21,18 +21,15 @@ SwapChain::SwapChain(Device& deviceRef, VkExtent2D extent) : device{deviceRef}, 
     createSyncObjects();
 }
 
-SwapChain::SwapChain(Device& deviceRef, VkExtent2D extent, std::shared_ptr<SwapChain> previous)
-    : device{deviceRef}, windowExtent{extent}, old_swap_chain{previous}
+SwapChain::SwapChain(Device& deviceRef, VkExtent2D extent, std::unique_ptr<SwapChain>& previous)
+    : device{deviceRef}, windowExtent{extent}
 {
-    createSwapChain();
+    createSwapChain(previous->swapChain);
     createImageViews();
     createRenderPass();
     createDepthResources();
     createFramebuffers();
     createSyncObjects();
-
-    // clean up swap chain
-    old_swap_chain = nullptr;
 }
 
 SwapChain::~SwapChain()
@@ -139,7 +136,7 @@ VkResult SwapChain::submitCommandBuffers(const VkCommandBuffer* buffers, uint32_
     return result;
 }
 
-void SwapChain::createSwapChain()
+void SwapChain::createSwapChain(VkSwapchainKHR previous)
 {
     SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
 
@@ -187,7 +184,7 @@ void SwapChain::createSwapChain()
     createInfo.presentMode = presentMode;
     createInfo.clipped = VK_TRUE;
 
-    createInfo.oldSwapchain = (old_swap_chain == nullptr) ? VK_NULL_HANDLE : old_swap_chain->swapChain;
+    createInfo.oldSwapchain = (previous == nullptr) ? VK_NULL_HANDLE : previous;
 
     auto result = vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain);
     if (result != VK_SUCCESS)
