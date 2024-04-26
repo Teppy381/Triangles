@@ -23,7 +23,7 @@ public:
 
     void renderObjects(VkCommandBuffer command_buffer, std::vector<Object>& objects, const Camera& camera);
 
-    std::string shaders_path = SHADERS_PATH; // defined at cmake configure time
+    const std::string shaders_path = SHADERS_PATH; // defined at cmake configure time
 
 private:
     void createPipelineLayout();

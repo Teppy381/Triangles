@@ -35,9 +35,19 @@ struct PipelineConfigInfo
 class Pipeline
 {
 public:
-    Pipeline(Device& device_, const std::string& vert_filepath,
-             const std::string& frag_filepath, const PipelineConfigInfo& config_info);
-    // Pipeline() = default;
+    Pipeline(
+        Device& device_,
+        const std::vector<char>& vert_code,
+        const std::vector<char>& frag_code,
+        const PipelineConfigInfo& config_info
+    );
+
+    Pipeline(
+        Device& device_,
+        const std::string& vert_filepath,
+        const std::string& frag_filepath,
+        const PipelineConfigInfo& config_info
+    );
 
     ~Pipeline();
 
@@ -49,7 +59,6 @@ public:
     static void defaultPipelineConfigInfo(PipelineConfigInfo& config_info);
 
 private:
-
     Device& device;
     VkPipeline graphics_pipeline;
     VkShaderModule vert_shader_module;
@@ -58,7 +67,6 @@ private:
     std::vector<char> readFile(const std::string& filepath);
 
     void createShaderModule(const std::vector<char>& code, VkShaderModule* shader_module);
-
 };
 
-}
+} // namespace yLab

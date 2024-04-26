@@ -2,10 +2,10 @@
 
 int main()
 {
-   // For some reason this part needs additional scope when compiling with "-O0" and
-   // there is no use of triangles or intersection_list before FirstApp::FirstApp() is called
-   // otherwise ERROR: vkBeginCommandBuffer: Invalid commandBuffer [VUID-vkBeginCommandBuffer-commandBuffer-parameter]
-   // {
+    // For some reason this part needs additional scope when compiling with "-O0" and
+    // there is no use of triangles or intersection_list before FirstApp::FirstApp() is called
+    // otherwise ERROR: vkBeginCommandBuffer: Invalid commandBuffer [VUID-vkBeginCommandBuffer-commandBuffer-parameter]
+    // {
     std::cout << "Enter triangles:" << std::endl;
 
     std::vector<geometry::Boxed_triangle_t> triangles = geometry::scan_triangles();
