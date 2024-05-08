@@ -2,7 +2,7 @@
 <br />
 <div align="center">
    <h1 align="center">Triangles</h1>
-   <img src="images/triangles.gif" height="200">
+   <img src="images/triangles.gif" height="360" style="border-radius: 10px; border: 2px solid">
 </div>
 
 
