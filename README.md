@@ -1,12 +1,8 @@
 
-<!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <!-- <a href="https://github.com/Teppy381/Triangles">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a> -->
-
-  <h1 align="center">Triangles</h1>
+   <h1 align="center">Triangles</h1>
+   <img src="images/triangles.gif" height="200">
 </div>
 
 
@@ -16,7 +12,7 @@ This project is a task on course "Uses and applications of C++ language" by K.I.
 
 What it does:
 1) Takes from console set of points and interprets them as triangles
-2) Opens window with 3D view of these triangles, colored red if they intersect with others, and blue otherwise
+2) Opens window with 3D view of these triangles, colored red if they intersect with any other triangle, and blue otherwise
 3) You can move and rotate camera to get a better look
 
 ### Built With
@@ -33,7 +29,7 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-You will need to install [Vulkan SDK](https://vulkan.lunarg.com/)
+**You will need to install [Vulkan SDK](https://vulkan.lunarg.com/)**
 
 ### Installation
 
@@ -80,7 +76,7 @@ You will need to install [Vulkan SDK](https://vulkan.lunarg.com/)
     Move Up = `SPACE`\
     Move Down = `LEFT_ALT`
 
-    (Free rotating camera works only in freeCam mode)\
+    (Free rotating camera works only in second mode)\
     Look Left = `LEFT`\
     Look Right = `RIGHT`\
     Look Up = `UP`\
